@@ -11,6 +11,8 @@ describe 'Merchants API' do
     response_body = JSON.parse(response.body, symbolize_names: true)
     merchants = response_body[:data]
 
+    expect(merchants.count).to eq(3)
+
     merchants.each do |merchant|
       expect(merchant).to have_key(:id)
       expect(merchant[:id]).to be_a(String)
@@ -49,14 +51,15 @@ describe 'Merchants API' do
     expect(response).to be_successful
 
     response_body = JSON.parse(response.body, symbolize_names: true)
-    merchant = response_body[:data]
+    items = response_body[:properties]
 
-    expect(merchant).to have_key(:id)
-    expect(merchant[:id]).to be_a(String)
+    items.each do |item|
+      expect(item).to have_key(:id)
+      expect(item[:id]).to be_a(String)
 
-    expect(merchant).to have_key(:attributes)
-    expect(merchant[:attributes][:name]).to be_a(String)
-
-    expect(merchant[:attributes]).to_not have_key(:created_at)
+      expect(item).to have_key(:attributes)
+      expect(item[:attributes][:name]).to be_a(String)
+      expect(item[:attributes]).to_not have_key(:created_at)
+    end
   end
 end

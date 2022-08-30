@@ -12,15 +12,15 @@ system(cmd)
 
 # 20.times do
 #   Item.create!(
-#     name: Faker::Item.name,
-#     description: Faker::Item.description,
-#     unit_price: Faker::Item.unit_price
+#     name: Faker::Commerce.product_name,
+#     description: Faker::Lorem.paragraph,
+#     unit_price: Faker::Number.decimal(l_digits: 2)
 #   )
 # end
 #
 # 5.times do
 #   Merchant.create!(
-#     name: Faker::Merchant.name
+#     name: Faker::Commerce.vendor
 #   )
 # end
 #
