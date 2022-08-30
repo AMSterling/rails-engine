@@ -14,6 +14,7 @@
 #
 require 'simplecov'
 SimpleCov.start 'rails' # open coverage/index.html
+SimpleCov.add_filter ['spec', 'config', 'channels', 'jobs', 'mailers']
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
