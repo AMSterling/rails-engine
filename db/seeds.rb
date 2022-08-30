@@ -9,3 +9,35 @@ cmd = "pg_restore --verbose --clean --no-acl --no-owner -h localhost -U $(whoami
 puts "Loading PostgreSQL Data dump into local database with command:"
 puts cmd
 system(cmd)
+
+# 20.times do
+#   Item.create!(
+#     name: Faker::Item.name,
+#     description: Faker::Item.description,
+#     unit_price: Faker::Item.unit_price
+#   )
+# end
+#
+# 5.times do
+#   Merchant.create!(
+#     name: Faker::Merchant.name
+#   )
+# end
+#
+# items = Item.all
+#
+# items.each do |item|
+#   merchant_id_1 = rand(1..5)
+#   merchant_id_2 = rand(1..5)
+#
+#     MerchantItem.create!([
+#       {
+#         item_id: item.id,
+#         merchant_id: merchant_id_1
+#       },
+#       {
+#         item_id: item.id,
+#         merchant_id: merchant_id_2
+#       }
+#       ])
+# end
