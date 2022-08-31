@@ -45,7 +45,7 @@ describe 'Items API' do
     expect(item[:attributes]).to_not have_key(:created_at)
   end
 
-  it "can create a new item" do
+  it "can create a new item then delete it" do
     item_params = ({
                     name: Faker::Commerce.product_name,
                     description: Faker::Lorem.paragraph,
@@ -58,10 +58,16 @@ describe 'Items API' do
     post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
     created_item = Item.last
 
-    expect(response).to be_successful
+    expect(response).to have_http_status(201)
     expect(created_item.name).to eq(item_params[:name])
     expect(created_item.description).to eq(item_params[:description])
     expect(created_item.unit_price).to eq(item_params[:unit_price])
     expect(created_item.merchant_id).to eq(item_params[:merchant_id])
+
+    delete "/api/v1/items/#{created_item.id}"
+
+    expect(response).to have_http_status(204)
+    expect(Item.count).to eq(0)
+    expect{Item.find(created_item.id)}.to raise_error(ActiveRecord::RecordNotFound)
   end
 end
