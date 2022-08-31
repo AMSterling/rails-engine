@@ -85,4 +85,12 @@ describe 'Items API' do
     expect(item.name).to_not eq(previous_name)
     expect(item.name).to eq(item.name)
   end
+
+  it 'returns 404 if item cannot be found' do
+    id = 90654501
+    
+    get "/api/v1/items/#{id}"
+
+    expect(response).to have_http_status(404)
+  end
 end
