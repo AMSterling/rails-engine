@@ -88,9 +88,41 @@ describe 'Items API' do
 
   it 'returns 404 if item cannot be found' do
     id = 90654501
-    
+
     get "/api/v1/items/#{id}"
 
     expect(response).to have_http_status(404)
+
+    delete "/api/v1/items/#{id}"
+
+    expect(response).to have_http_status(404)
+
+    # post "/api/v1/items"
+    #
+    # expect(response).to have_http_status(404)
+
+    # patch "/api/v1/items/#{id}"
+    #
+    # expect(response).to have_http_status(404)
+  end
+
+  it 'can return the items merchant' do
+    id = create(:merchant).id
+    item = create(:item, merchant_id: id)
+
+    get "/api/v1/items/#{item.id}/merchant"
+
+    expect(response).to be_successful
+
+    response_body = JSON.parse(response.body, symbolize_names: true)
+    merchant = response_body[:data]
+
+    expect(merchant).to have_key(:id)
+    expect(merchant[:id]).to be_a(String)
+
+    expect(merchant).to have_key(:attributes)
+    expect(merchant[:attributes][:name]).to be_a(String)
+
+    expect(merchant[:attributes]).to_not have_key(:created_at)
   end
 end
