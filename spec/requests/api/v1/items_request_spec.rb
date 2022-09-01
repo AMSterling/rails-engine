@@ -77,7 +77,6 @@ describe 'Items API' do
     item_params = { name: Faker::Commerce.product_name }
     headers = {"CONTENT_TYPE" => "application/json"}
 
-    # We include this header to make sure that these params are passed as JSON rather than as plain text
     patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate({item: item_params})
     item = Item.find_by(id: id)
 
@@ -87,6 +86,7 @@ describe 'Items API' do
   end
 
   it 'returns 404 if item cannot be found' do
+    merchant = create(:merchant)
     id = 90654501
 
     get "/api/v1/items/#{id}"
@@ -96,14 +96,34 @@ describe 'Items API' do
     delete "/api/v1/items/#{id}"
 
     expect(response).to have_http_status(404)
+  end
 
-    # post "/api/v1/items"
-    #
-    # expect(response).to have_http_status(404)
+  it 'returns 404 if item cannot be created' do
+    merchant = create(:merchant)
+    item_params = ({
+                    name: Faker::Commerce.product_name,
+                    description: Faker::Lorem.paragraph,
+                    unit_price: Faker::Lorem.paragraph,
+                    merchant_id: merchant.id
+                  })
 
-    # patch "/api/v1/items/#{id}"
-    #
-    # expect(response).to have_http_status(404)
+    headers = {"CONTENT_TYPE" => "application/json"}
+
+    post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+
+    expect(response).to have_http_status(404)
+  end
+
+  it 'returns 404 if item cannot be updated' do
+    id = create(:item).id
+    previous_name = Item.last.name
+    item_params = { name: Faker::Commerce.product_name, merchant_id: 92048440 }
+    headers = {"CONTENT_TYPE" => "application/json"}
+
+    patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate({item: item_params})
+    item = Item.find_by(id: id)
+
+    expect(response).to have_http_status(404)
   end
 
   it 'can return the items merchant' do
