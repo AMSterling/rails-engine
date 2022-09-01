@@ -71,7 +71,7 @@ describe 'Merchants API' do
     end
   end
 
-  it 'can find merchant by partial name' do
+  it 'can find first merchant matched by case insensitive name' do
     create_list(:merchant, 5)
 
     merchant1 = Merchant.first
@@ -95,4 +95,6 @@ describe 'Merchants API' do
 
     expect(merchant[:attributes]).to_not have_key(:created_at)
   end
+
+
 end

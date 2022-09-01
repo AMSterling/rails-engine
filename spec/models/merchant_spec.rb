@@ -16,10 +16,20 @@ RSpec.describe Merchant, type: :model do
       it 'scopes merchants with fuzzy search by name' do
         create_list(:merchant, 5)
 
-        search = Merchant.first.name
-        
-        Merchant.find_merchant(search).each do |merchant|
-          expect(search).to eq(merchant.name)
+        name_search = Merchant.first.name
+
+        Merchant.find_merchant(name_search).each do |merchant|
+          expect(name_search).to eq(merchant.name)
+        end
+      end
+
+      it 'returns empty if no search matches name' do
+        create_list(:merchant, 5)
+
+        name_search = 'Junk'
+
+        Merchant.find_merchant(name_search).each do |merchant|
+          expect(name_search).to eq nil
         end
       end
     end
