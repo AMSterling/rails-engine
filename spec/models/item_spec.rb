@@ -14,4 +14,28 @@ RSpec.describe Item, type: :model do
     it { should have_many(:invoice_items) }
     it { should have_many(:invoices).through(:invoice_items) }
   end
+
+  describe 'model methods' do
+    describe '#find_item' do
+      it 'scopes items with fuzzy search by name' do
+        create_list(:item, 5)
+
+        name_search = Item.first.name
+
+        Item.find_item(name_search).each do |item|
+          expect(name_search).to eq(item.name)
+        end
+      end
+
+      it 'returns empty if no search matches name' do
+        create_list(:item, 5)
+
+        name_search = 'Junk'
+
+        Item.find_item(name_search).each do |item|
+          expect(name_search).to eq nil
+        end
+      end
+    end
+  end
 end

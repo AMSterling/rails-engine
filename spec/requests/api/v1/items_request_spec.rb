@@ -6,10 +6,10 @@ describe 'Items API' do
 
     get '/api/v1/items'
 
+    expect(response).to be_successful
+
     response_body = JSON.parse(response.body, symbolize_names: true)
     items = response_body[:data]
-
-    expect(response).to be_successful
 
     items.each do |item|
       expect(item).to have_key(:id)
@@ -144,5 +144,61 @@ describe 'Items API' do
     expect(merchant[:attributes][:name]).to be_a(String)
 
     expect(merchant[:attributes]).to_not have_key(:created_at)
+  end
+
+  it 'can find all items by name case insensitive' do
+    create_list(:item, 10)
+    item1 = Item.first
+
+    get "/api/v1/items/find_all?name=#{item1.name.upcase}"
+
+    expect(response).to be_successful
+
+    response_body = JSON.parse(response.body, symbolize_names: true)
+    items = response_body[:data]
+
+    items.each do |item|
+      expect(item).to have_key(:id)
+      expect(item[:id]).to be_a(String)
+      expect(item[:id].to_i).to eq(item1.id)
+
+      expect(item).to have_key(:attributes)
+      expect(item[:attributes][:name]).to be_a(String)
+      expect(item[:attributes][:name]).to eq(item1.name)
+      expect(item[:attributes][:description]).to be_a(String)
+      expect(item[:attributes][:unit_price]).to be_a(Float)
+      expect(item[:attributes][:merchant_id]).to be_an(Integer)
+      expect(item[:attributes]).to_not have_key(:created_at)
+    end 
+  end
+
+  it 'returns 400 if no item matches search by name' do
+    create_list(:item, 5)
+
+    search_name = 'Junk'
+
+    get "/api/v1/items/find_all?name=#{search_name}"
+
+    expect(response).to_not be_successful
+
+    # response_body = JSON.parse(response.body, symbolize_names: true)
+    # item = response_body[:data]
+    #
+    # expect(item).to eq({:message => 'Item not found'})
+  end
+
+  it 'returns 404 if search by name is empty' do
+    create_list(:item, 5)
+
+    search_name = ''
+
+    get "/api/v1/items/find_all?name=#{search_name}"
+
+    expect(response).to_not be_successful
+
+    response_body = JSON.parse(response.body, symbolize_names: true)
+    item = response_body[:data]
+
+    expect(item).to eq({})
   end
 end
