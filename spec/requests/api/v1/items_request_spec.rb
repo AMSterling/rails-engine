@@ -24,7 +24,7 @@ describe 'Items API' do
     end
   end
 
-  it 'can get one merchant by its ID' do
+  it 'can get one item by its ID' do
     id = create(:item).id
 
     get "/api/v1/items/#{id}"
@@ -169,7 +169,7 @@ describe 'Items API' do
       expect(item[:attributes][:unit_price]).to be_a(Float)
       expect(item[:attributes][:merchant_id]).to be_an(Integer)
       expect(item[:attributes]).to_not have_key(:created_at)
-    end 
+    end
   end
 
   it 'returns 400 if no item matches search by name' do
@@ -180,11 +180,6 @@ describe 'Items API' do
     get "/api/v1/items/find_all?name=#{search_name}"
 
     expect(response).to_not be_successful
-
-    # response_body = JSON.parse(response.body, symbolize_names: true)
-    # item = response_body[:data]
-    #
-    # expect(item).to eq({:message => 'Item not found'})
   end
 
   it 'returns 404 if search by name is empty' do
