@@ -1,9 +1,21 @@
 require 'rails_helper'
 
 describe 'Items API' do
-  it 'sends a list of items' do
-    create_list(:item, 5)
+  # let!(:items) { create_list(:item, 5) }
+  # let!(:item1) { items.first }
+  # let!(:item2) { items.second }
+  # let!(:item3) { items.third }
+  # let!(:item4) { items.fourth }
+  # let!(:item5) { items.fifth }
 
+  let!(:invoice_items) { create_list(:invoice_item, 5) }
+  let!(:item1) { invoice_items.first.item }
+  let!(:item2) { invoice_items.second.item }
+  let!(:item3) { invoice_items.third.item }
+  let!(:item4) { invoice_items.fourth.item }
+  let!(:item5) { invoice_items.fifth.item }
+
+  it 'sends a list of items' do
     get '/api/v1/items'
 
     expect(response).to be_successful
@@ -25,9 +37,7 @@ describe 'Items API' do
   end
 
   it 'can get one item by its ID' do
-    id = create(:item).id
-
-    get "/api/v1/items/#{id}"
+    get "/api/v1/items/#{item1.id}"
 
     response_body = JSON.parse(response.body, symbolize_names: true)
     item = response_body[:data]
@@ -59,6 +69,7 @@ describe 'Items API' do
     created_item = Item.last
 
     expect(response).to have_http_status(201)
+    expect(Item.count).to eq(6)
     expect(created_item.name).to eq(item_params[:name])
     expect(created_item.description).to eq(item_params[:description])
     expect(created_item.unit_price).to eq(item_params[:unit_price])
@@ -67,7 +78,7 @@ describe 'Items API' do
     delete "/api/v1/items/#{created_item.id}"
 
     expect(response).to have_http_status(204)
-    expect(Item.count).to eq(0)
+    expect(Item.count).to eq(5)
     expect{Item.find(created_item.id)}.to raise_error(ActiveRecord::RecordNotFound)
   end
 
@@ -127,6 +138,15 @@ describe 'Items API' do
     expect(response).to have_http_status(404)
   end
 
+  it 'can destroy an item' do
+    delete "/api/v1/items/#{item5.id}"
+
+    expect(response).to have_http_status(204)
+    expect(Item.count).to eq(4)
+    expect(InvoiceItem.count).to eq(4)
+    expect{Item.find(item5.id)}.to raise_error(ActiveRecord::RecordNotFound)
+  end
+
   it 'can return the items merchant' do
     id = create(:merchant).id
     item = create(:item, merchant_id: id)
@@ -148,10 +168,7 @@ describe 'Items API' do
   end
 
   it 'can find all items by name case insensitive' do
-    create_list(:item, 10)
-    item1 = Item.first
-
-    get "/api/v1/items/find_all?name=#{item1.name.upcase}"
+    get "/api/v1/items/find_all?name=#{item1.name[0, 3]}"
 
     expect(response).to be_successful
 
@@ -161,11 +178,10 @@ describe 'Items API' do
     items.each do |item|
       expect(item).to have_key(:id)
       expect(item[:id]).to be_a(String)
-      expect(item[:id].to_i).to eq(item1.id)
 
       expect(item).to have_key(:attributes)
       expect(item[:attributes][:name]).to be_a(String)
-      expect(item[:attributes][:name]).to eq(item1.name)
+      expect(item[:attributes][:name]).to start_with(item1.name[0, 3])
       expect(item[:attributes][:description]).to be_a(String)
       expect(item[:attributes][:unit_price]).to be_a(Float)
       expect(item[:attributes][:merchant_id]).to be_an(Integer)
@@ -174,8 +190,6 @@ describe 'Items API' do
   end
 
   it 'returns 400 if no item matches search by name' do
-    create_list(:item, 5)
-
     search_name = 'Junk'
 
     get "/api/v1/items/find_all?name=#{search_name}"
@@ -184,8 +198,6 @@ describe 'Items API' do
   end
 
   it 'returns 404 if search by name is empty' do
-    create_list(:item, 5)
-
     search_name = ''
 
     get "/api/v1/items/find_all?name=#{search_name}"
@@ -199,9 +211,6 @@ describe 'Items API' do
   end
 
   it 'can search for an item by name' do
-    create_list(:item, 10)
-    item1 = Item.first
-
     get "/api/v1/items/find?name=#{item1.name[0, 3]}"
 
     expect(response).to be_successful
@@ -212,11 +221,11 @@ describe 'Items API' do
     expect(item).to have_key(:id)
     expect(item[:id]).to be_a(String)
     expect(item[:id].to_i).to eq(item1.id)
+    expect(item).to have_key(:type)
+    expect(item[:attributes][:name]).to start_with(item1.name[0, 3])
   end
 
-  it 'returns an item over a given price' do
-    create_list(:item, 5)
-
+  it 'returns one item over a given price' do
     min_price = 50
     max_price = 150
 
@@ -241,8 +250,6 @@ describe 'Items API' do
 
 
   it 'returns error when min price is so big nothing matches' do
-    create_list(:item, 5)
-
     min_price = 200000
 
     get "/api/v1/items/find?min_price=#{min_price}"
@@ -256,7 +263,6 @@ describe 'Items API' do
   end
 
   it 'returns first item under max price' do
-    create_list(:item, 5)
     min_price = 50
     max_price = 150
 
@@ -280,8 +286,6 @@ describe 'Items API' do
   end
 
   it 'returns an item within price range' do
-    create_list(:item, 5)
-
     min_price = 50
     max_price = 150
 
