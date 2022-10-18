@@ -5,5 +5,5 @@ class Merchant < ApplicationRecord
   has_many :invoices
   has_many :customers, through: :invoices
 
-  scope :find_merchant,  -> (name) {where('name ILIKE ?', "%#{name}%")}
+  scope :find_merchant,  -> (name) { where('name ILIKE ?', "%#{name}%") }
 end

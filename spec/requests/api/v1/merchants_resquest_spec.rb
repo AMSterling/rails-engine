@@ -136,4 +136,26 @@ describe 'Merchants API' do
 
     expect(merchant).to eq({})
   end
+
+  it 'can find all merchants by name case insensitive' do
+    create_list(:merchant, 5)
+    merchant1 = Merchant.first
+
+    get "/api/v1/merchants/find_all?name=#{merchant1.name[0, 3]}"
+
+    expect(response).to be_successful
+
+    response_body = JSON.parse(response.body, symbolize_names: true)
+    merchants = response_body[:data]
+
+    merchants.each do |merchant|
+      expect(merchant).to have_key(:id)
+      expect(merchant[:id]).to be_a(String)
+
+      expect(merchant).to have_key(:attributes)
+      expect(merchant[:attributes][:name]).to be_a(String)
+      expect(merchant[:attributes][:name]).to include(merchant1.name[0, 3])
+      expect(merchant[:attributes]).to_not have_key(:created_at)
+    end
+  end
 end
