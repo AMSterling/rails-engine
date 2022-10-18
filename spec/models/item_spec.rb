@@ -16,24 +16,47 @@ RSpec.describe Item, type: :model do
   end
 
   describe 'model methods' do
+    let!(:items) { create_list(:item, 5) }
+    let!(:item1) { items.first }
+    let!(:item2) { items.second }
+    let!(:item3) { items.third }
+    let!(:item4) { items.fourth }
+    let!(:item5) { items.last }
+
     describe '#find_item' do
       it 'scopes items with fuzzy search by name' do
-        create_list(:item, 5)
+        name_search = item1.name[0, 3]
 
-        name_search = Item.first.name
-
-        Item.find_item(name_search).each do |item|
-          expect(name_search).to eq(item.name)
+        Item.find_name(name_search).each do |item|
+          expect(name_search).to eq(item1.name[0, 3])
         end
       end
 
       it 'returns empty if no search matches name' do
-        create_list(:item, 5)
-
         name_search = 'Junk'
 
-        Item.find_item(name_search).each do |item|
+        Item.find_name(name_search).each do |item|
           expect(name_search).to eq nil
+        end
+      end
+    end
+
+    describe '#find_min_price' do
+      it 'scopes items with unit price over specified amount' do
+        min_price = 50
+
+        Item.find_min_price(min_price).each do |item|
+          expect(item.unit_price).to be >= 50
+        end
+      end
+    end
+
+    describe '#find_max_price' do
+      it 'scopes items with unit price under specified amount' do
+        max_price = 50
+
+        Item.find_max_price(max_price).each do |item|
+          expect(item.unit_price).to be <= 50
         end
       end
     end
