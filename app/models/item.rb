@@ -11,5 +11,5 @@ class Item < ApplicationRecord
   scope :find_name,  -> (name) { where(['name ILIKE ?', "%#{name}%"]) }
   scope :find_min_price, -> (min_price) { where('unit_price >= ?', min_price) }
   scope :find_max_price, -> (max_price) { where('unit_price <= ?', max_price) }
-  # scope :min_max_price, -> (min_price, max_price) { where("unit_price >= :min_price AND unit_price <= :max_price", "%#{min_price}%", "%#{max_price}%") }
+  # scope :min_max_price, -> (min_price, max_price) { where("unit_price >= ? AND unit_price <= ?", min_price, max_price) }
 end

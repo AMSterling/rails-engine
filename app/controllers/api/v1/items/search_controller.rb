@@ -1,5 +1,4 @@
 class Api::V1::Items::SearchController < ApplicationController
-
   def index
     items = Item.find_name(params[:name]).order(:name)
     if !params[:name].present?
@@ -12,11 +11,11 @@ class Api::V1::Items::SearchController < ApplicationController
   end
 
   def show
-    @items = Item.all
+    items = Item.where(nil)
     scope_params.each do |key, value|
-      @item = @items.public_send("find_#{key}", value)
+      @item = items.public_send("find_#{key}", value)
     end
-    
+
     if @item.present?
       render json: ItemSerializer.new(@item.first)
     else
