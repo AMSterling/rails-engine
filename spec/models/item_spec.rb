@@ -28,7 +28,7 @@ RSpec.describe Item, type: :model do
         name_search = item1.name[0, 3]
 
         Item.find_name(name_search).each do |item|
-          expect(item.name).to start_with(item1.name[0, 3])
+          expect(item.name.downcase).to include(item1.name[0, 3].downcase)
         end
       end
 

@@ -126,7 +126,7 @@ describe 'Items API' do
     expect(response).to have_http_status(404)
   end
 
-  it 'can destroy an item' do
+  it 'can destroy an item and invoice if only item on invoice' do
     get '/api/v1/items'
 
     expect(response).to be_successful
@@ -207,18 +207,18 @@ describe 'Items API' do
     expect(item).to eq({})
   end
 
-  # xit 'returns 400 if find by name is empty' do
-  #   search_name = ''
-  #
-  #   get "/api/v1/items/find?name=#{search_name}"
-  #
-  #   expect(response).to_not be_successful
-  #
-  #   response_body = JSON.parse(response.body, symbolize_names: true)
-  #   item = response_body[:data]
-  #
-  #   expect(item).to eq({})
-  # end
+  it 'returns 400 if find by name is empty' do
+    search_name = ''
+
+    get "/api/v1/items/find?name=#{search_name}"
+
+    expect(response).to_not be_successful
+
+    response_body = JSON.parse(response.body, symbolize_names: true)
+    item = response_body[:data]
+
+    expect(item).to eq({})
+  end
 
   it 'can search for an item by name' do
     get "/api/v1/items/find?name=#{item1.name[0, 3]}"
@@ -235,7 +235,7 @@ describe 'Items API' do
     expect(item[:attributes][:name]).to start_with(item1.name[0, 3])
   end
 
-  it 'returns one item over a given price' do
+  it 'can fetch one item by min price' do
     min_price = 50
     max_price = 150
 
@@ -272,7 +272,21 @@ describe 'Items API' do
     expect(item).to eq({})
   end
 
-  it 'returns first item under max price' do
+  it 'returns an error if min price is negative amount' do
+    min_price = -5
+    max_price = -5
+
+    get "/api/v1/items/find?min_price=#{min_price}"
+
+    expect(response).to have_http_status(400)
+
+    response_body = JSON.parse(response.body, symbolize_names: true)
+    item = response_body[:data]
+
+    expect(item).to eq({})
+  end
+
+  it 'can fetch one item by max price' do
     min_price = 50
     max_price = 150
 
@@ -295,11 +309,10 @@ describe 'Items API' do
     expect(item[:attributes]).to_not have_key(:created_at)
   end
 
-  xit 'returns an error if price search is negative amount' do
-    min_price = -5
-    max_price = -5
+  it 'returns error when max price is so small nothing matches' do
+    max_price = 0.30
 
-    get "/api/v1/items/find?min_price=#{min_price}"
+    get "/api/v1/items/find?max_price=#{max_price}"
 
     expect(response).to have_http_status(400)
 
@@ -309,7 +322,21 @@ describe 'Items API' do
     expect(item).to eq({})
   end
 
-  xit 'returns an item within price range' do
+  it 'returns an error if max price is negative amount' do
+    min_price = -5
+    max_price = -5
+
+    get "/api/v1/items/find?max_price=#{max_price}"
+
+    expect(response).to have_http_status(400)
+
+    response_body = JSON.parse(response.body, symbolize_names: true)
+    item = response_body[:data]
+
+    expect(item).to eq({})
+  end
+
+  it 'returns an item within price range' do
     min_price = 50
     max_price = 150
 
@@ -331,5 +358,19 @@ describe 'Items API' do
     expect(item[:attributes][:unit_price]).to be <= 150
     expect(item[:attributes][:merchant_id]).to be_an(Integer)
     expect(item[:attributes]).to_not have_key(:created_at)
+  end
+
+  it 'returns an error if min price is greater than max price' do
+    min_price = 50
+    max_price = 5
+
+    get "/api/v1/items/find?max_price=#{max_price}"
+
+    expect(response).to have_http_status(400)
+
+    response_body = JSON.parse(response.body, symbolize_names: true)
+    item = response_body[:data]
+
+    expect(item).to eq({})
   end
 end
