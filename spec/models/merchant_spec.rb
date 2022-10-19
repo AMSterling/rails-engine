@@ -12,20 +12,23 @@ RSpec.describe Merchant, type: :model do
   end
 
   describe 'model methods' do
+    let!(:merchants) { create_list(:merchant, 5) }
+    let!(:merchant1) { merchants.first }
+    let!(:merchant2) { merchants.second }
+    let!(:merchant3) { merchants.third }
+    let!(:merchant4) { merchants.fourth }
+    let!(:merchant5) { merchants.fifth }
+
     describe '#find_merchant' do
       it 'scopes merchants with fuzzy search by name' do
-        create_list(:merchant, 5)
-
-        name_search = Merchant.first.name
+        name_search = merchant1.name[0, 3]
 
         Merchant.find_merchant(name_search).each do |merchant|
-          expect(name_search).to eq(merchant.name)
+          expect(merchant.name.downcase).to include(merchant1.name[0, 3].downcase)
         end
       end
 
       it 'returns empty if no search matches name' do
-        create_list(:merchant, 5)
-
         name_search = 'Junk'
 
         Merchant.find_merchant(name_search).each do |merchant|

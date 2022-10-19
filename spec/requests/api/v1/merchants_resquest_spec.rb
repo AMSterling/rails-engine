@@ -1,9 +1,14 @@
 require 'rails_helper'
 
 describe 'Merchants API' do
-  it 'sends a list of all merchants' do
-    create_list(:merchant, 3)
+  let!(:merchants) { create_list(:merchant, 5) }
+  let!(:merchant1) { merchants.first }
+  let!(:merchant2) { merchants.second }
+  let!(:merchant3) { merchants.third }
+  let!(:merchant4) { merchants.fourth }
+  let!(:merchant5) { merchants.fifth }
 
+  it 'sends a list of all merchants' do
     get '/api/v1/merchants'
 
     expect(response).to be_successful
@@ -11,7 +16,7 @@ describe 'Merchants API' do
     response_body = JSON.parse(response.body, symbolize_names: true)
     merchants = response_body[:data]
 
-    expect(merchants.count).to eq(3)
+    expect(merchants.count).to eq(5)
 
     merchants.each do |merchant|
       expect(merchant).to have_key(:id)
@@ -24,9 +29,7 @@ describe 'Merchants API' do
   end
 
   it 'can get one merchant by its ID' do
-    id = create(:merchant).id
-
-    get "/api/v1/merchants/#{id}"
+    get "/api/v1/merchants/#{merchant1.id}"
 
     expect(response).to be_successful
 
@@ -54,10 +57,9 @@ describe 'Merchants API' do
   end
 
   it 'returns all items from the merchant' do
-    id = create(:merchant).id
-    create_list(:item, 5, merchant_id: id)
+    create_list(:item, 5, merchant_id: merchant1.id)
 
-    get "/api/v1/merchants/#{id}/items"
+    get "/api/v1/merchants/#{merchant1.id}/items"
 
     response_body = JSON.parse(response.body, symbolize_names: true)
     merchant_items = response_body[:data]
@@ -83,13 +85,7 @@ describe 'Merchants API' do
   end
 
   it 'can find first merchant matched by case insensitive name' do
-    create_list(:merchant, 5)
-
-    merchant1 = Merchant.first
-    merchant2 = Merchant.second
-    merchant3 = Merchant.third
-
-    get "/api/v1/merchants/find?name=#{merchant1.name.upcase}"
+    get "/api/v1/merchants/find?name=#{merchant1.name[0, 3]}"
 
     expect(response).to be_successful
 
@@ -102,14 +98,12 @@ describe 'Merchants API' do
 
     expect(merchant).to have_key(:attributes)
     expect(merchant[:attributes][:name]).to be_a(String)
-    expect(merchant[:attributes][:name]).to eq(merchant1.name)
+    expect(merchant[:attributes][:name].downcase).to include(merchant1.name[0, 3].downcase)
 
     expect(merchant[:attributes]).to_not have_key(:created_at)
   end
 
   it 'returns a message if no merchant matches search by name' do
-    create_list(:merchant, 5)
-
     search_name = 'Junk'
 
     get "/api/v1/merchants/find?name=#{search_name}"
@@ -123,8 +117,6 @@ describe 'Merchants API' do
   end
 
   it 'returns 404 if search by name is empty' do
-    create_list(:merchant, 5)
-
     search_name = ''
 
     get "/api/v1/merchants/find?name=#{search_name}"
@@ -138,9 +130,6 @@ describe 'Merchants API' do
   end
 
   it 'can find all merchants by name case insensitive' do
-    create_list(:merchant, 5)
-    merchant1 = Merchant.first
-
     get "/api/v1/merchants/find_all?name=#{merchant1.name[0, 3]}"
 
     expect(response).to be_successful

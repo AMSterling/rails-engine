@@ -32,8 +32,13 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def destroy
-    if Item.exists?(params[:id])
+    @item = Item.find(params[:id])
+
+    if @item.invoices.empty?
       Item.destroy(params[:id])
+    elsif @item.invoices.exists?
+      @item.invoices.delete_empty_invoice
+      @item.destroy
     else
       render status: 404
     end

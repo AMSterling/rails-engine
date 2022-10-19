@@ -1,13 +1,6 @@
 require 'rails_helper'
 
 describe 'Items API' do
-  # let!(:items) { create_list(:item, 5) }
-  # let!(:item1) { items.first }
-  # let!(:item2) { items.second }
-  # let!(:item3) { items.third }
-  # let!(:item4) { items.fourth }
-  # let!(:item5) { items.fifth }
-
   let!(:invoice_items) { create_list(:invoice_item, 5) }
   let!(:item1) { invoice_items.first.item }
   let!(:item2) { invoice_items.second.item }
@@ -98,14 +91,9 @@ describe 'Items API' do
   end
 
   it 'returns 404 if item cannot be found' do
-    merchant = create(:merchant)
     id = 90654501
 
     get "/api/v1/items/#{id}"
-
-    expect(response).to have_http_status(404)
-
-    delete "/api/v1/items/#{id}"
 
     expect(response).to have_http_status(404)
   end
@@ -139,12 +127,20 @@ describe 'Items API' do
   end
 
   it 'can destroy an item' do
+    get '/api/v1/items'
+
+    expect(response).to be_successful
+    expect(Item.count).to eq(5)
+    expect(InvoiceItem.count).to eq(5)
+
     delete "/api/v1/items/#{item5.id}"
 
     expect(response).to have_http_status(204)
     expect(Item.count).to eq(4)
     expect(InvoiceItem.count).to eq(4)
     expect{Item.find(item5.id)}.to raise_error(ActiveRecord::RecordNotFound)
+    expect{InvoiceItem.find(invoice_items.fifth.id)}.to raise_error(ActiveRecord::RecordNotFound)
+    expect{Invoice.find(invoice_items.fifth.invoice.id)}.to raise_error(ActiveRecord::RecordNotFound)
   end
 
   it 'can return the items merchant' do
@@ -181,7 +177,7 @@ describe 'Items API' do
 
       expect(item).to have_key(:attributes)
       expect(item[:attributes][:name]).to be_a(String)
-      expect(item[:attributes][:name]).to start_with(item1.name[0, 3])
+      expect(item[:attributes][:name].downcase).to include(item1.name[0, 3].downcase)
       expect(item[:attributes][:description]).to be_a(String)
       expect(item[:attributes][:unit_price]).to be_a(Float)
       expect(item[:attributes][:merchant_id]).to be_an(Integer)
@@ -195,9 +191,10 @@ describe 'Items API' do
     get "/api/v1/items/find_all?name=#{search_name}"
 
     expect(response).to_not be_successful
+    expect(response).to have_http_status(400)
   end
 
-  it 'returns 404 if search by name is empty' do
+  it 'returns 404 if find all by name is empty' do
     search_name = ''
 
     get "/api/v1/items/find_all?name=#{search_name}"
@@ -209,6 +206,19 @@ describe 'Items API' do
 
     expect(item).to eq({})
   end
+
+  # xit 'returns 400 if find by name is empty' do
+  #   search_name = ''
+  #
+  #   get "/api/v1/items/find?name=#{search_name}"
+  #
+  #   expect(response).to_not be_successful
+  #
+  #   response_body = JSON.parse(response.body, symbolize_names: true)
+  #   item = response_body[:data]
+  #
+  #   expect(item).to eq({})
+  # end
 
   it 'can search for an item by name' do
     get "/api/v1/items/find?name=#{item1.name[0, 3]}"
@@ -250,16 +260,16 @@ describe 'Items API' do
 
 
   it 'returns error when min price is so big nothing matches' do
-    min_price = 200000
+    min_price = 500000000
 
     get "/api/v1/items/find?min_price=#{min_price}"
-    #
-    # expect(response).to have_http_status(400)
-    #
-    # response_body = JSON.parse(response.body, symbolize_names: true)
-    # item = response_body[:data]
-    #
-    # expect(item).to eq({:error => 'error'})
+
+    expect(response).to have_http_status(400)
+
+    response_body = JSON.parse(response.body, symbolize_names: true)
+    item = response_body[:data]
+
+    expect(item).to eq({})
   end
 
   it 'returns first item under max price' do
@@ -285,7 +295,21 @@ describe 'Items API' do
     expect(item[:attributes]).to_not have_key(:created_at)
   end
 
-  it 'returns an item within price range' do
+  xit 'returns an error if price search is negative amount' do
+    min_price = -5
+    max_price = -5
+
+    get "/api/v1/items/find?min_price=#{min_price}"
+
+    expect(response).to have_http_status(400)
+
+    response_body = JSON.parse(response.body, symbolize_names: true)
+    item = response_body[:data]
+
+    expect(item).to eq({})
+  end
+
+  xit 'returns an item within price range' do
     min_price = 50
     max_price = 150
 

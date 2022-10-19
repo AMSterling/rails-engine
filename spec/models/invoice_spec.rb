@@ -12,4 +12,26 @@ RSpec.describe Invoice, type: :model do
     it { should have_many(:invoice_items) }
     it { should have_many(:items).through(:invoice_items) }
   end
+
+  describe 'class methods' do
+    let!(:invoices) { create_list(:invoice, 3) }
+    let!(:invoice1) { invoices.first }
+    let!(:invoice2) { invoices.second }
+    let!(:invoice3) { invoices.third }
+    let!(:items) { create_list(:item, 3) }
+    let!(:item1) { items.first }
+    let!(:item2) { items.second }
+    let!(:item3) { items.third }
+    let!(:invoice_item1) { create(:invoice_item, item_id: item1.id, invoice_id: invoice1.id) }
+    let!(:invoice_item2) { create(:invoice_item, item_id: item2.id, invoice_id: invoice1.id) }
+    let!(:invoice_item3) { create(:invoice_item, item_id: item1.id, invoice_id: invoice2.id) }
+    let!(:invoice_item4) { create(:invoice_item, item_id: item2.id, invoice_id: invoice2.id) }
+    let!(:invoice_item5) { create(:invoice_item, item_id: item3.id, invoice_id: invoice2.id) }
+    let!(:invoice_item6) { create(:invoice_item, item_id: item3.id, invoice_id: invoice3.id) }
+
+    it '#delete_empty_invoice' do
+
+      expect(item3.invoices.delete_empty_invoice).to eq([invoice3])
+    end
+  end
 end
