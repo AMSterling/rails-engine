@@ -1,6 +1,5 @@
 class Api::V1::ItemsController < ApplicationController
   before_action :require_item, only: [:update, :destroy]
-  rescue_from ActiveRecord::RecordNotFound, with: :not_found
 
   def index
     render json: ItemSerializer.new(Item.all)
@@ -47,10 +46,6 @@ class Api::V1::ItemsController < ApplicationController
   private
   def require_item
     @item = Item.find(params[:id])
-  end
-
-  def not_found
-    render status: 404
   end
 
   def item_params
