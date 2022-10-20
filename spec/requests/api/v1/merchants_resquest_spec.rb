@@ -8,165 +8,184 @@ describe 'Merchants API' do
   let!(:merchant4) { merchants.fourth }
   let!(:merchant5) { merchants.fifth }
 
-  it 'sends a list of all merchants' do
-    get '/api/v1/merchants'
+  describe 'merchant index and show' do
+    it 'sends a list of all merchants' do
+      get '/api/v1/merchants'
 
-    expect(response).to be_successful
+      expect(response).to be_successful
 
-    response_body = JSON.parse(response.body, symbolize_names: true)
-    merchants = response_body[:data]
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      merchants = response_body[:data]
 
-    expect(merchants.count).to eq(5)
+      expect(merchants.count).to eq(5)
 
-    merchants.each do |merchant|
+      merchants.each do |merchant|
+        expect(merchant).to have_key(:id)
+        expect(merchant[:id]).to be_a(String)
+
+        expect(merchant).to have_key(:attributes)
+        expect(merchant[:attributes][:name]).to be_a(String)
+        expect(merchant[:attributes]).to_not have_key(:created_at)
+      end
+    end
+
+    it 'can get one merchant by its ID' do
+      get "/api/v1/merchants/#{merchant1.id}"
+
+      expect(response).to be_successful
+
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      merchant = response_body[:data]
+
       expect(merchant).to have_key(:id)
       expect(merchant[:id]).to be_a(String)
 
       expect(merchant).to have_key(:attributes)
       expect(merchant[:attributes][:name]).to be_a(String)
+
       expect(merchant[:attributes]).to_not have_key(:created_at)
     end
-  end
 
-  it 'can get one merchant by its ID' do
-    get "/api/v1/merchants/#{merchant1.id}"
+    it 'returns error if no merchant by ID' do
+      id = 4164616
 
-    expect(response).to be_successful
+      get "/api/v1/merchants/#{id}"
 
-    response_body = JSON.parse(response.body, symbolize_names: true)
-    merchant = response_body[:data]
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      merchant = response_body[:data]
 
-    expect(merchant).to have_key(:id)
-    expect(merchant[:id]).to be_a(String)
-
-    expect(merchant).to have_key(:attributes)
-    expect(merchant[:attributes][:name]).to be_a(String)
-
-    expect(merchant[:attributes]).to_not have_key(:created_at)
-  end
-
-  it 'returns error if no merchant by ID' do
-    id = 4164616
-
-    get "/api/v1/merchants/#{id}"
-
-    response_body = JSON.parse(response.body, symbolize_names: true)
-    merchant = response_body[:data]
-
-    expect(response).to have_http_status(404)
-  end
-
-  it 'returns all items from the merchant' do
-    create_list(:item, 5, merchant_id: merchant1.id)
-
-    get "/api/v1/merchants/#{merchant1.id}/items"
-
-    response_body = JSON.parse(response.body, symbolize_names: true)
-    merchant_items = response_body[:data]
-
-    expect(response).to be_successful
-
-    merchant_items.each do |item|
-      expect(item).to have_key(:id)
-      expect(item[:id]).to be_a(String)
-
-      expect(item).to have_key(:type)
-      expect(item[:type]).to be_a(String)
-      expect(item[:type]).to eq('item')
-
-      expect(item).to have_key(:attributes)
-      expect(item[:attributes]).to be_a(Hash)
-      expect(item[:attributes][:name]).to be_a(String)
-      expect(item[:attributes][:description]).to be_a(String)
-      expect(item[:attributes][:unit_price]).to be_a(Float)
-      expect(item[:attributes][:merchant_id]).to be_an(Integer)
-      expect(item[:attributes]).to_not have_key(:created_at)
+      expect(response).to have_http_status(404)
     end
   end
 
-  it 'can find first merchant matched by case insensitive name' do
-    get "/api/v1/merchants/find?name=#{merchant1.name[0, 3]}"
+  describe 'merchant items' do
+    it 'returns all items from the merchant' do
+      create_list(:item, 5, merchant_id: merchant1.id)
 
-    expect(response).to be_successful
+      get "/api/v1/merchants/#{merchant1.id}/items"
 
-    response_body = JSON.parse(response.body, symbolize_names: true)
-    merchant = response_body[:data]
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      merchant_items = response_body[:data]
 
-    expect(merchant).to have_key(:id)
-    expect(merchant[:id]).to be_a(String)
-    expect(merchant[:id].to_i).to eq(merchant1.id)
+      expect(response).to be_successful
 
-    expect(merchant).to have_key(:attributes)
-    expect(merchant[:attributes][:name]).to be_a(String)
-    expect(merchant[:attributes][:name].downcase).to include(merchant1.name[0, 3].downcase)
+      merchant_items.each do |item|
+        expect(item).to have_key(:id)
+        expect(item[:id]).to be_a(String)
 
-    expect(merchant[:attributes]).to_not have_key(:created_at)
+        expect(item).to have_key(:type)
+        expect(item[:type]).to be_a(String)
+        expect(item[:type]).to eq('item')
+
+        expect(item).to have_key(:attributes)
+        expect(item[:attributes]).to be_a(Hash)
+        expect(item[:attributes][:name]).to be_a(String)
+        expect(item[:attributes][:description]).to be_a(String)
+        expect(item[:attributes][:unit_price]).to be_a(Float)
+        expect(item[:attributes][:merchant_id]).to be_an(Integer)
+        expect(item[:attributes]).to_not have_key(:created_at)
+      end
+    end
+
+    it 'returns error if merchant ID is passed as a string' do
+      id = 'merchant_id'
+
+      get "/api/v1/merchants/#{id}/items"
+
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      merchant = response_body[:data]
+
+      expect(response).to have_http_status(404)
+    end
   end
 
-  it 'returns a message if no merchant matches search by name' do
-    search_name = 'Junk'
+  describe 'find merchant' do
+    it 'can find first merchant matched by case insensitive name' do
+      get "/api/v1/merchants/find?name=#{merchant1.name[0, 3]}"
 
-    get "/api/v1/merchants/find?name=#{search_name}"
+      expect(response).to be_successful
 
-    expect(response).to be_successful
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      merchant = response_body[:data]
 
-    response_body = JSON.parse(response.body, symbolize_names: true)
-    merchant = response_body[:data]
-
-    expect(merchant).to eq({:message => 'Merchant not found'})
-  end
-
-  it 'returns 404 if search by name is empty' do
-    search_name = ''
-
-    get "/api/v1/merchants/find?name=#{search_name}"
-
-    expect(response).to_not be_successful
-
-    response_body = JSON.parse(response.body, symbolize_names: true)
-    merchant = response_body[:data]
-
-    expect(merchant).to eq({})
-  end
-
-  it 'can find all merchants by name case insensitive' do
-    get "/api/v1/merchants/find_all?name=#{merchant1.name[0, 3]}"
-
-    expect(response).to be_successful
-
-    response_body = JSON.parse(response.body, symbolize_names: true)
-    merchants = response_body[:data]
-
-    merchants.each do |merchant|
       expect(merchant).to have_key(:id)
       expect(merchant[:id]).to be_a(String)
+      expect(merchant[:id].to_i).to eq(merchant1.id)
 
       expect(merchant).to have_key(:attributes)
       expect(merchant[:attributes][:name]).to be_a(String)
-      expect(merchant[:attributes][:name]).to include(merchant1.name[0, 3])
+      expect(merchant[:attributes][:name].downcase).to include(merchant1.name[0, 3].downcase)
+
       expect(merchant[:attributes]).to_not have_key(:created_at)
+    end
+
+    it 'returns a message if no merchant matches search by name' do
+      search_name = 'Junk'
+
+      get "/api/v1/merchants/find?name=#{search_name}"
+
+      expect(response).to be_successful
+
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      merchant = response_body[:data]
+
+      expect(merchant).to eq({:message => 'Merchant not found'})
+    end
+
+    it 'returns 404 if search by name is empty' do
+      search_name = ''
+
+      get "/api/v1/merchants/find?name=#{search_name}"
+
+      expect(response).to_not be_successful
+
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      merchant = response_body[:data]
+
+      expect(merchant).to eq({})
     end
   end
 
-  it 'returns 400 if no merchant matches search by name' do
-    search_name = 'Junk'
+  describe 'find all merchants' do
+    it 'can find all merchants by name case insensitive' do
+      get "/api/v1/merchants/find_all?name=#{merchant1.name[0, 3]}"
 
-    get "/api/v1/merchants/find_all?name=#{search_name}"
+      expect(response).to be_successful
 
-    expect(response).to_not be_successful
-    expect(response).to have_http_status(404)
-  end
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      merchants = response_body[:data]
 
-  it 'returns 404 if find all by name is empty' do
-    search_name = ''
+      merchants.each do |merchant|
+        expect(merchant).to have_key(:id)
+        expect(merchant[:id]).to be_a(String)
 
-    get "/api/v1/merchants/find_all?name=#{search_name}"
+        expect(merchant).to have_key(:attributes)
+        expect(merchant[:attributes][:name]).to be_a(String)
+        expect(merchant[:attributes][:name]).to include(merchant1.name[0, 3])
+        expect(merchant[:attributes]).to_not have_key(:created_at)
+      end
+    end
 
-    expect(response).to_not be_successful
+    it 'returns 400 if no merchant matches search by name' do
+      search_name = 'Junk'
 
-    response_body = JSON.parse(response.body, symbolize_names: true)
-    merchant = response_body[:data]
+      get "/api/v1/merchants/find_all?name=#{search_name}"
 
-    expect(merchant).to eq({})
-  end
+      expect(response).to_not be_successful
+      expect(response).to have_http_status(404)
+    end
+
+    it 'returns 404 if find all by name is empty' do
+      search_name = ''
+
+      get "/api/v1/merchants/find_all?name=#{search_name}"
+
+      expect(response).to_not be_successful
+
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      merchant = response_body[:data]
+
+      expect(merchant).to eq({})
+    end
+  end 
 end

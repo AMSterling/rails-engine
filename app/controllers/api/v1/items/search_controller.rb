@@ -1,7 +1,7 @@
 class Api::V1::Items::SearchController < ApplicationController
   def index
     items = Item.where(nil)
-    if search_nil?(params) || name_and_price?(params)
+    if name_and_price?(params)
       render status: 400
     elsif price_between?(params)
       @item = items.find_min_price(params[:min_price]).find_max_price(params[:max_price])
@@ -26,7 +26,7 @@ class Api::V1::Items::SearchController < ApplicationController
 
   def show
     items = Item.where(nil)
-    if search_nil?(params) || name_and_price?(params)
+    if name_and_price?(params)
       render json: { data: {}, error: 'error' }, status: 400
     elsif price_between?(params)
       @item = items.find_min_price(params[:min_price]).find_max_price(params[:max_price])
@@ -52,10 +52,6 @@ class Api::V1::Items::SearchController < ApplicationController
   private
   def scope_params
     params.permit(:name, :min_price, :max_price)
-  end
-
-  def search_nil?(params)
-    params[:name].nil? && params[:min_price].nil? && params[:max_price].nil?
   end
 
   def price_between?(params)
