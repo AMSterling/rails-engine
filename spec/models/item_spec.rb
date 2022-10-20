@@ -23,12 +23,20 @@ RSpec.describe Item, type: :model do
     let!(:item4) { items.fourth }
     let!(:item5) { items.last }
 
-    describe '#find_item' do
+    describe '#find_name' do
       it 'scopes items with fuzzy search by name' do
         name_search = item1.name[0, 3]
 
         Item.find_name(name_search).each do |item|
           expect(item.name.downcase).to include(item1.name[0, 3].downcase)
+        end
+      end
+
+      it 'scopes items with search through description' do
+        name_search = item1.description
+
+        Item.find_name(name_search).each do |item|
+          expect(item[:attributes][:name]).to eq(item1.name)
         end
       end
 
