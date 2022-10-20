@@ -14,10 +14,12 @@ RSpec.describe Invoice, type: :model do
   end
 
   describe 'class methods' do
-    let!(:invoices) { create_list(:invoice, 3) }
+    let!(:invoices) { create_list(:invoice, 5) }
     let!(:invoice1) { invoices.first }
     let!(:invoice2) { invoices.second }
     let!(:invoice3) { invoices.third }
+    let!(:invoice4) { invoices.fourth }
+    let!(:invoice5) { invoices.fifth }
     let!(:items) { create_list(:item, 3) }
     let!(:item1) { items.first }
     let!(:item2) { items.second }
@@ -28,10 +30,16 @@ RSpec.describe Invoice, type: :model do
     let!(:invoice_item4) { create(:invoice_item, item_id: item2.id, invoice_id: invoice2.id) }
     let!(:invoice_item5) { create(:invoice_item, item_id: item3.id, invoice_id: invoice2.id) }
     let!(:invoice_item6) { create(:invoice_item, item_id: item3.id, invoice_id: invoice3.id) }
+    let!(:invoice_item7) { create(:invoice_item, item_id: item3.id, invoice_id: invoice4.id) }
+    let!(:invoice_item8) { create(:invoice_item, item_id: item2.id, invoice_id: invoice5.id) }
 
     it '#delete_empty_invoice' do
 
-      expect(item3.invoices.delete_empty_invoice).to eq([invoice3])
+      expect(Invoice.count).to eq 5
+      expect(item3.invoices.delete_empty_invoice).to eq([invoice3, invoice4])
+      expect(Invoice.count).to eq 3
+      expect(item2.invoices.delete_empty_invoice).to eq([invoice5])
+      expect(Invoice.count).to eq 2
     end
   end
 end

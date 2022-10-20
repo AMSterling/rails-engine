@@ -8,11 +8,19 @@ class Invoice < ApplicationRecord
   has_many :items, through: :invoice_items
 
   def self.delete_empty_invoice
-    single_item_invoices = joins(:items)
-    .select('invoices.*')
+    single_item_invoices = includes(:items)
     .group('invoices.id')
     .having('count(items) = 1')
     .pluck(:id)
     Invoice.destroy(single_item_invoices)
   end
 end
+
+# def self.delete_empty_invoice
+  # single_item_invoices = joins(:items)
+  # .select('invoices.*')
+  # .group('invoices.id')
+  # .having('count(items) = 1')
+  # .pluck(:id)
+  # Invoice.destroy(single_item_invoices)
+# end

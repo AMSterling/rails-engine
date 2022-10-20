@@ -1,5 +1,6 @@
 class Api::V1::ItemsController < ApplicationController
   before_action :require_item, only: [:update, :destroy]
+
   def index
     render json: ItemSerializer.new(Item.all)
   end
