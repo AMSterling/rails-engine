@@ -11,10 +11,8 @@ class Api::V1::Items::SearchController < ApplicationController
         render json: { data: [], error: 'error' }, status: 400
       end
     else
-      scope_params.each do |key, value|
-        if !value.empty? && !value.to_f.negative?
-          @item = items.public_send("find_#{key}", value)
-        end
+      scope_params(params).each do |key, value|
+        @item = items.public_send("find_#{key}", value) if !value.empty? && !value.to_f.negative?
       end
       if @item.present?
         render json: ItemSerializer.new(@item)
@@ -36,10 +34,8 @@ class Api::V1::Items::SearchController < ApplicationController
         render json: { data: {}, error: 'error' }, status: 400
       end
     else
-      scope_params.each do |key, value|
-        if !value.empty? && !value.to_f.negative?
-          @item = items.public_send("find_#{key}", value)
-        end
+      scope_params(params).each do |key, value|
+        @item = items.public_send("find_#{key}", value) if !value.empty? && !value.to_f.negative?
       end
       if @item.present?
         render json: ItemSerializer.new(@item.first)
@@ -50,8 +46,8 @@ class Api::V1::Items::SearchController < ApplicationController
   end
 
   private
-  def scope_params
-    params.permit(:name, :min_price, :max_price)
+  def scope_params(params)
+    params.slice(:name, :min_price, :max_price)
   end
 
   def price_between?(params)
