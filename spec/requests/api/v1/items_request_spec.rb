@@ -216,6 +216,11 @@ describe 'Items API' do
 
       expect(response).to_not be_successful
       expect(response).to have_http_status(400)
+
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      items = response_body[:data]
+
+      expect(items).to eq([])
     end
 
     it 'returns 400 if find all by name is empty' do
@@ -349,7 +354,7 @@ describe 'Items API' do
 
     it 'cannot search by name and min price' do
       min_price = 50
-      max_price = 5
+      max_price = 150
 
       get "/api/v1/items/find_all?name=#{item1.name[0, 3]}&min_price=#{min_price}"
 
@@ -358,7 +363,7 @@ describe 'Items API' do
 
     it 'cannot search by name and max price' do
       min_price = 50
-      max_price = 5
+      max_price = 150
 
       get "/api/v1/items/find_all?name=#{item1.name[0, 3]}&max_price=#{max_price}"
 
@@ -390,9 +395,8 @@ describe 'Items API' do
 
       expect(item).to have_key(:id)
       expect(item[:id]).to be_a(String)
-      expect(item[:id].to_i).to eq(item1.id)
       expect(item).to have_key(:type)
-      expect(item[:attributes][:name]).to start_with(item1.name[0, 3])
+      expect(item[:attributes][:name].downcase).to include(item1.name[0, 3].downcase)
     end
 
     it 'can fetch one item by min price' do
