@@ -147,4 +147,26 @@ describe 'Merchants API' do
       expect(merchant[:attributes]).to_not have_key(:created_at)
     end
   end
+
+  it 'returns 400 if no merchant matches search by name' do
+    search_name = 'Junk'
+
+    get "/api/v1/merchants/find_all?name=#{search_name}"
+
+    expect(response).to_not be_successful
+    expect(response).to have_http_status(404)
+  end
+
+  it 'returns 404 if find all by name is empty' do
+    search_name = ''
+
+    get "/api/v1/merchants/find_all?name=#{search_name}"
+
+    expect(response).to_not be_successful
+
+    response_body = JSON.parse(response.body, symbolize_names: true)
+    merchant = response_body[:data]
+
+    expect(merchant).to eq({})
+  end
 end

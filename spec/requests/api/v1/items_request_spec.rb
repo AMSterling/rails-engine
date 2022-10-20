@@ -1,12 +1,22 @@
 require 'rails_helper'
 
 describe 'Items API' do
-  let!(:invoice_items) { create_list(:invoice_item, 5) }
-  let!(:item1) { invoice_items.first.item }
-  let!(:item2) { invoice_items.second.item }
-  let!(:item3) { invoice_items.third.item }
-  let!(:item4) { invoice_items.fourth.item }
-  let!(:item5) { invoice_items.fifth.item }
+  let!(:invoices) { create_list(:invoice, 3) }
+  let!(:invoice1) { invoices.first }
+  let!(:invoice2) { invoices.second }
+  let!(:invoice3) { invoices.third }
+  let!(:items) { create_list(:item, 5) }
+  let!(:item1) { items.first }
+  let!(:item2) { items.second }
+  let!(:item3) { items.third }
+  let!(:item4) { items.fourth }
+  let!(:item5) { items.fifth }
+  let!(:invoice_item1) { create(:invoice_item, item_id: item1.id, invoice_id: invoice1.id) }
+  let!(:invoice_item2) { create(:invoice_item, item_id: item2.id, invoice_id: invoice1.id) }
+  let!(:invoice_item3) { create(:invoice_item, item_id: item1.id, invoice_id: invoice2.id) }
+  let!(:invoice_item4) { create(:invoice_item, item_id: item2.id, invoice_id: invoice2.id) }
+  let!(:invoice_item5) { create(:invoice_item, item_id: item3.id, invoice_id: invoice2.id) }
+  let!(:invoice_item6) { create(:invoice_item, item_id: item3.id, invoice_id: invoice3.id) }
 
   describe 'item CRUD' do
     it 'sends a list of items' do
@@ -63,7 +73,7 @@ describe 'Items API' do
       created_item = Item.last
 
       expect(response).to have_http_status(201)
-      expect(Item.count).to eq(6)
+      expect(Item.count).to eq(12)
       expect(created_item.name).to eq(item_params[:name])
       expect(created_item.description).to eq(item_params[:description])
       expect(created_item.unit_price).to eq(item_params[:unit_price])
@@ -72,7 +82,7 @@ describe 'Items API' do
       delete "/api/v1/items/#{created_item.id}"
 
       expect(response).to have_http_status(204)
-      expect(Item.count).to eq(5)
+      expect(Item.count).to eq(11)
       expect{Item.find(created_item.id)}.to raise_error(ActiveRecord::RecordNotFound)
     end
 
@@ -131,17 +141,20 @@ describe 'Items API' do
       get '/api/v1/items'
 
       expect(response).to be_successful
-      expect(Item.count).to eq(5)
-      expect(InvoiceItem.count).to eq(5)
+      expect(Item.count).to eq(11)
 
-      delete "/api/v1/items/#{item5.id}"
+      delete "/api/v1/items/#{item3.id}"
 
       expect(response).to have_http_status(204)
-      expect(Item.count).to eq(4)
-      expect(InvoiceItem.count).to eq(4)
-      expect{Item.find(item5.id)}.to raise_error(ActiveRecord::RecordNotFound)
-      expect{InvoiceItem.find(invoice_items.fifth.id)}.to raise_error(ActiveRecord::RecordNotFound)
-      expect{Invoice.find(invoice_items.fifth.invoice.id)}.to raise_error(ActiveRecord::RecordNotFound)
+      expect(Item.count).to eq(10)
+      expect{Item.find(item3.id)}.to raise_error(ActiveRecord::RecordNotFound)
+      expect{InvoiceItem.find(invoice_item6.id)}.to raise_error(ActiveRecord::RecordNotFound)
+      expect{Invoice.find(invoice3.id)}.to raise_error(ActiveRecord::RecordNotFound)
+      expect(Invoice.exists?(invoice2.id)).to eq true
+    end
+
+    it 'cannot destroy an item' do
+
     end
   end
 

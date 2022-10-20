@@ -3,10 +3,10 @@ class Api::V1::Merchants::SearchController < ApplicationController
 
   def index
     merchants = Merchant.find_merchant(params[:name]).order(:name)
-    if !merchants.empty?
-      render json: MerchantSerializer.new(merchants)
-    else
+    if merchants.empty?
       render json: { data: [] }, status: 404
+    else
+      render json: MerchantSerializer.new(merchants)
     end
   end
 
