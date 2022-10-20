@@ -151,10 +151,18 @@ describe 'Items API' do
       expect{InvoiceItem.find(invoice_item6.id)}.to raise_error(ActiveRecord::RecordNotFound)
       expect{Invoice.find(invoice3.id)}.to raise_error(ActiveRecord::RecordNotFound)
       expect(Invoice.exists?(invoice2.id)).to eq true
+
+      delete "/api/v1/items/#{item3.id}"
+
+      expect(response).to have_http_status(404)
     end
 
-    it 'cannot destroy an item' do
+    it 'cannot destroy an item that does not exist' do
+      id = 14564614
 
+      delete "/api/v1/items/#{id}"
+
+      expect(response).to have_http_status(404)
     end
   end
 
@@ -385,21 +393,6 @@ describe 'Items API' do
       expect(item[:id].to_i).to eq(item1.id)
       expect(item).to have_key(:type)
       expect(item[:attributes][:name]).to start_with(item1.name[0, 3])
-    end
-
-    xit 'will also find an item through matching descriptions' do
-      get "/api/v1/items/find?name=#{item1.description}"
-
-      expect(response).to be_successful
-
-      response_body = JSON.parse(response.body, symbolize_names: true)
-      item = response_body[:data]
-
-      expect(item).to have_key(:id)
-      expect(item[:id]).to be_a(String)
-      expect(item[:id].to_i).to eq(item1.id)
-      expect(item).to have_key(:type)
-      expect(item[:attributes][:name]).to eq(item1.name)
     end
 
     it 'can fetch one item by min price' do

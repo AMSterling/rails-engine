@@ -27,7 +27,7 @@ class Api::V1::Items::SearchController < ApplicationController
   def show
     items = Item.where(nil)
     if search_nil?(params) || name_and_price?(params)
-      render status: 400
+      render json: { data: {}, error: 'error' }, status: 400
     elsif price_between?(params)
       @item = items.find_min_price(params[:min_price]).find_max_price(params[:max_price])
       if @item.present?
