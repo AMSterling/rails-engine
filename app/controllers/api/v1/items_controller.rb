@@ -1,4 +1,5 @@
 class Api::V1::ItemsController < ApplicationController
+  before_action :require_item, only: [:update, :destroy]
   def index
     render json: ItemSerializer.new(Item.all)
   end
@@ -23,17 +24,14 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def update
-    item = Item.find(params[:id])
-    if item.update(item_params)
-      render json: ItemSerializer.new(item)
+    if @item.update(item_params)
+      render json: ItemSerializer.new(@item)
     else
       render status: 404
     end
   end
 
   def destroy
-    @item = Item.find(params[:id])
-
     if @item.invoices.empty?
       Item.destroy(params[:id])
     elsif @item.invoices.exists?
@@ -45,6 +43,10 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   private
+  def require_item
+    @item = Item.find(params[:id])
+  end
+
   def item_params
     params.require(:item).permit(
                             :name,
