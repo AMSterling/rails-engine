@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Merchants API' do
+describe 'Merchants API endpoints' do
   let!(:merchants) { create_list(:merchant, 5) }
   let!(:merchant1) { merchants.first }
   let!(:merchant2) { merchants.second }
@@ -96,6 +96,7 @@ describe 'Merchants API' do
       merchant = response_body[:data]
 
       expect(response).to have_http_status(404)
+      expect(merchant).to eq nil
     end
   end
 
@@ -166,7 +167,7 @@ describe 'Merchants API' do
       end
     end
 
-    it 'returns 400 if no merchant matches search by name' do
+    it 'returns 404 if no merchant matches search by name' do
       search_name = 'Junk'
 
       get "/api/v1/merchants/find_all?name=#{search_name}"
@@ -181,11 +182,12 @@ describe 'Merchants API' do
       get "/api/v1/merchants/find_all?name=#{search_name}"
 
       expect(response).to_not be_successful
+      expect(response).to have_http_status(400)
 
       response_body = JSON.parse(response.body, symbolize_names: true)
       merchant = response_body[:data]
 
       expect(merchant).to eq({})
     end
-  end 
+  end
 end
