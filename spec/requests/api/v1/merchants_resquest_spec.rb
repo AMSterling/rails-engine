@@ -29,7 +29,7 @@ describe 'Merchants API endpoints' do
       end
     end
 
-    it 'can get one merchant by its ID' do
+    it 'gets one merchant by its ID' do
       get "/api/v1/merchants/#{merchant1.id}"
 
       expect(response).to be_successful
@@ -47,12 +47,12 @@ describe 'Merchants API endpoints' do
     end
 
     it 'returns error if no merchant by ID' do
-      id = 4164616
+      id = 4_164_616
 
       get "/api/v1/merchants/#{id}"
 
       response_body = JSON.parse(response.body, symbolize_names: true)
-      merchant = response_body[:data]
+      response_body[:data]
 
       expect(response).to have_http_status(404)
     end
@@ -102,7 +102,7 @@ describe 'Merchants API endpoints' do
 
   describe 'find merchant' do
     it 'can find first merchant matched by case insensitive name' do
-      get "/api/v1/merchants/find?name=#{merchant1.name[0, 3]}"
+      get "/api/v1/merchants/find?name=#{merchant1.name.to(4)}"
 
       expect(response).to be_successful
 
@@ -115,7 +115,7 @@ describe 'Merchants API endpoints' do
 
       expect(merchant).to have_key(:attributes)
       expect(merchant[:attributes][:name]).to be_a(String)
-      expect(merchant[:attributes][:name].downcase).to include(merchant1.name[0, 3].downcase)
+      expect(merchant[:attributes][:name].downcase).to include(merchant1.name.to(4).downcase)
 
       expect(merchant[:attributes]).to_not have_key(:created_at)
     end
@@ -130,7 +130,7 @@ describe 'Merchants API endpoints' do
       response_body = JSON.parse(response.body, symbolize_names: true)
       merchant = response_body[:data]
 
-      expect(merchant).to eq({:message => 'Merchant not found'})
+      expect(merchant).to eq({ :message => 'Merchant not found' })
     end
 
     it 'returns 404 if search by name is empty' do
@@ -149,7 +149,7 @@ describe 'Merchants API endpoints' do
 
   describe 'find all merchants' do
     it 'can find all merchants by name case insensitive' do
-      get "/api/v1/merchants/find_all?name=#{merchant1.name[0, 3]}"
+      get "/api/v1/merchants/find_all?name=#{merchant1.name.to(4)}"
 
       expect(response).to be_successful
 
@@ -162,7 +162,7 @@ describe 'Merchants API endpoints' do
 
         expect(merchant).to have_key(:attributes)
         expect(merchant[:attributes][:name]).to be_a(String)
-        expect(merchant[:attributes][:name]).to include(merchant1.name[0, 3])
+        expect(merchant[:attributes][:name]).to include(merchant1.name.to(4))
         expect(merchant[:attributes]).to_not have_key(:created_at)
       end
     end

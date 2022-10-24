@@ -1,5 +1,5 @@
 class Api::V1::ItemsController < ApplicationController
-  before_action :require_item, only: [:update, :destroy]
+  before_action :set_item, only: %i[update destroy]
 
   def index
     render json: ItemSerializer.new(Item.all)
@@ -11,16 +11,16 @@ class Api::V1::ItemsController < ApplicationController
     else
       render json: {
         error: 'Item does not exist or is no longer available'
-      }, status: 404
+      }, status: :not_found
     end
   end
 
   def create
     item = Item.new(item_params)
     if item.save
-      render json: ItemSerializer.new(item), status: 201
+      render json: ItemSerializer.new(item), status: :created
     else
-      render status: 404
+      render status: :not_found
     end
   end
 
@@ -28,31 +28,27 @@ class Api::V1::ItemsController < ApplicationController
     if @item.update(item_params)
       render json: ItemSerializer.new(@item)
     else
-      render status: 404
+      render status: :not_found
     end
   end
 
   def destroy
-    if @item.invoices.empty?
-      Item.destroy(params[:id])
-    elsif @item.invoices.exists?
-      @item.invoices.delete_empty_invoice
-      @item.destroy
-    else
-      render status: 404
-    end
+    @item.invoices.delete_empty_invoice if @item.invoices.exists?
+    @item.destroy
   end
 
   private
-  def require_item
+
+  def set_item
     @item = Item.find(params[:id])
   end
 
   def item_params
     params.require(:item).permit(
-                            :name,
-                            :description,
-                            :unit_price,
-                            :merchant_id)
+                                  :name,
+                                  :description,
+                                  :unit_price,
+                                  :merchant_id
+                                )
   end
 end

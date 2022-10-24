@@ -40,7 +40,7 @@ RSpec.describe 'Items API endpoints' do
       end
     end
 
-    it 'can get one item by its ID' do
+    it 'fetches one item by ID' do
       get "/api/v1/items/#{item1.id}"
 
       response_body = JSON.parse(response.body, symbolize_names: true)
@@ -59,15 +59,15 @@ RSpec.describe 'Items API endpoints' do
       expect(item[:attributes]).to_not have_key(:created_at)
     end
 
-    it "can create a new item then delete it" do
-      item_params = ({
-                      name: Faker::Commerce.product_name,
-                      description: Faker::Lorem.paragraph,
-                      unit_price: Faker::Number.decimal(l_digits: 2),
-                      merchant_id: create(:merchant).id
-                    })
+    it 'creates a new item then deletes it' do
+      item_params = {
+                        name: Faker::Commerce.product_name,
+                        description: Faker::Lorem.paragraph,
+                        unit_price: Faker::Number.decimal(l_digits: 2),
+                        merchant_id: create(:merchant).id
+                    }
 
-      headers = {"CONTENT_TYPE" => "application/json"}
+      headers = { 'CONTENT_TYPE' => 'application/json' }
 
       post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
       created_item = Item.last
@@ -83,17 +83,17 @@ RSpec.describe 'Items API endpoints' do
 
       expect(response).to have_http_status(204)
       expect(Item.count).to eq(11)
-      expect{Item.find(created_item.id)}.to raise_error(ActiveRecord::RecordNotFound)
+      expect { Item.find(created_item.id) }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
-    it "can update an existing item" do
+    it 'updates an existing item' do
       id = create(:item).id
       previous_name = Item.last.name
       item_params = { name: Faker::Commerce.product_name }
 
-      headers = {"CONTENT_TYPE" => "application/json"}
+      headers = { 'CONTENT_TYPE' => 'application/json' }
 
-      patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate({item: item_params})
+      patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate(item: item_params)
       item = Item.find_by(id: id)
 
       expect(response).to be_successful
@@ -102,42 +102,43 @@ RSpec.describe 'Items API endpoints' do
     end
 
     it 'returns 404 if item cannot be found' do
-      id = 90654501
+      id = 90_654_501
 
       get "/api/v1/items/#{id}"
 
       expect(response).to have_http_status(404)
-      expect{Item.find(id)}.to raise_error(ActiveRecord::RecordNotFound)
+      expect { Item.find(id) }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'returns 404 if item cannot be created' do
-      item_params = ({
-                      name: Faker::Commerce.product_name,
-                      description: Faker::Lorem.paragraph,
-                      unit_price: Faker::Lorem.paragraph,
-                      merchant_id: create(:merchant).id
-                    })
+      item_params = {
+                        name: Faker::Commerce.product_name,
+                        description: Faker::Lorem.paragraph,
+                        unit_price: Faker::Lorem.paragraph,
+                        merchant_id: create(:merchant).id
+                   }
 
-      headers = {"CONTENT_TYPE" => "application/json"}
+      headers = { 'CONTENT_TYPE' => 'application/json' }
 
-      post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+      post '/api/v1/items', headers: headers, params: JSON.generate(item: item_params)
 
       expect(response).to have_http_status(404)
     end
 
     it 'returns 404 if item cannot be updated' do
       id = create(:item).id
-      previous_name = Item.last.name
-      item_params = { name: Faker::Commerce.product_name, merchant_id: 92048440 }
-      headers = {"CONTENT_TYPE" => "application/json"}
+      Item.last.name
 
-      patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate({item: item_params})
-      item = Item.find_by(id: id)
+      item_params = { name: Faker::Commerce.product_name, merchant_id: 92_048_440 }
+      headers = { 'CONTENT_TYPE' => 'application/json' }
+
+      patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate(item: item_params)
+      Item.find_by(id: id)
 
       expect(response).to have_http_status(404)
     end
 
-    it 'can destroy an item and invoice if only item on invoice' do
+    it 'destroys the invoice if only item on invoice is deleted' do
       get '/api/v1/items'
 
       expect(response).to be_successful
@@ -147,9 +148,9 @@ RSpec.describe 'Items API endpoints' do
 
       expect(response).to have_http_status(204)
       expect(Item.count).to eq(10)
-      expect{Item.find(item3.id)}.to raise_error(ActiveRecord::RecordNotFound)
-      expect{InvoiceItem.find(invoice_item6.id)}.to raise_error(ActiveRecord::RecordNotFound)
-      expect{Invoice.find(invoice3.id)}.to raise_error(ActiveRecord::RecordNotFound)
+      expect { Item.find(item3.id) }.to raise_error(ActiveRecord::RecordNotFound)
+      expect { InvoiceItem.find(invoice_item6.id) }.to raise_error(ActiveRecord::RecordNotFound)
+      expect { Invoice.find(invoice3.id) }.to raise_error(ActiveRecord::RecordNotFound)
       expect(Invoice.exists?(invoice2.id)).to eq true
 
       delete "/api/v1/items/#{item3.id}"
@@ -158,16 +159,16 @@ RSpec.describe 'Items API endpoints' do
     end
 
     it 'cannot destroy an item that does not exist' do
-      id = 14564614
+      id = 14_564_614
 
       delete "/api/v1/items/#{id}"
 
       expect(response).to have_http_status(404)
-      expect{Item.find(id)}.to raise_error(ActiveRecord::RecordNotFound)
+      expect { Item.find(id) }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 
-  it 'can return the items merchant' do
+  it 'returns an items merchant' do
     id = create(:merchant).id
     item = create(:item, merchant_id: id)
 
@@ -188,6 +189,20 @@ RSpec.describe 'Items API endpoints' do
   end
 
   describe 'find one item' do
+    it 'can fetch first item matching partial name' do
+      get "/api/v1/items/find?name=#{item1.name.to(4)}"
+
+      expect(response).to be_successful
+
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      item = response_body[:data]
+
+      expect(item).to have_key(:id)
+      expect(item[:id]).to be_a(String)
+      expect(item).to have_key(:type)
+      expect(item[:attributes][:name].downcase).to include(item1.name.to(4).downcase)
+    end
+
     it 'returns 400 if find by name is empty' do
       search_name = ''
 
@@ -201,23 +216,8 @@ RSpec.describe 'Items API endpoints' do
       expect(item).to eq({})
     end
 
-    it 'can search for an item by name' do
-      get "/api/v1/items/find?name=#{item1.name[0, 3]}"
-
-      expect(response).to be_successful
-
-      response_body = JSON.parse(response.body, symbolize_names: true)
-      item = response_body[:data]
-
-      expect(item).to have_key(:id)
-      expect(item[:id]).to be_a(String)
-      expect(item).to have_key(:type)
-      expect(item[:attributes][:name].downcase).to include(item1.name[0, 3].downcase)
-    end
-
     it 'can fetch one item by min price' do
       min_price = 50
-      max_price = 150
 
       get "/api/v1/items/find?min_price=#{min_price}"
 
@@ -238,9 +238,8 @@ RSpec.describe 'Items API endpoints' do
       expect(item[:attributes]).to_not have_key(:created_at)
     end
 
-
     it 'returns error when min price is so big nothing matches' do
-      min_price = 500000000
+      min_price = 500_000_000
 
       get "/api/v1/items/find?min_price=#{min_price}"
 
@@ -254,7 +253,6 @@ RSpec.describe 'Items API endpoints' do
 
     it 'returns an error if min price is negative amount' do
       min_price = -5
-      max_price = -5
 
       get "/api/v1/items/find?min_price=#{min_price}"
 
@@ -267,7 +265,6 @@ RSpec.describe 'Items API endpoints' do
     end
 
     it 'can fetch one item by max price' do
-      min_price = 50
       max_price = 150
 
       get "/api/v1/items/find?max_price=#{max_price}"
@@ -303,7 +300,6 @@ RSpec.describe 'Items API endpoints' do
     end
 
     it 'returns an error if max price is negative amount' do
-      min_price = -5
       max_price = -5
 
       get "/api/v1/items/find?max_price=#{max_price}"
@@ -356,18 +352,16 @@ RSpec.describe 'Items API endpoints' do
 
     it 'cannot search by name and min price' do
       min_price = 50
-      max_price = 150
 
-      get "/api/v1/items/find?name=#{item1.name[0, 3]}&min_price=#{min_price}"
+      get "/api/v1/items/find?name=#{item1.name.to(4)}&min_price=#{min_price}"
 
       expect(response).to have_http_status(400)
     end
 
     it 'cannot search by name and max price' do
-      min_price = 50
       max_price = 150
 
-      get "/api/v1/items/find?name=#{item1.name[0, 3]}&max_price=#{max_price}"
+      get "/api/v1/items/find?name=#{item1.name.to(4)}&max_price=#{max_price}"
 
       expect(response).to have_http_status(400)
     end
@@ -375,7 +369,7 @@ RSpec.describe 'Items API endpoints' do
 
   describe 'find all items' do
     it 'can find all items by name case insensitive' do
-      get "/api/v1/items/find_all?name=#{item1.name[0, 3]}"
+      get "/api/v1/items/find_all?name=#{item1.name.to(4)}"
 
       expect(response).to be_successful
 
@@ -388,7 +382,7 @@ RSpec.describe 'Items API endpoints' do
 
         expect(item).to have_key(:attributes)
         expect(item[:attributes][:name]).to be_a(String)
-        expect(item[:attributes][:name].downcase).to include(item1.name[0, 3].downcase)
+        expect(item[:attributes][:name].downcase).to include(item1.name.to(4).downcase)
         expect(item[:attributes][:description]).to be_a(String)
         expect(item[:attributes][:unit_price]).to be_a(Float)
         expect(item[:attributes][:merchant_id]).to be_an(Integer)
@@ -425,7 +419,6 @@ RSpec.describe 'Items API endpoints' do
 
     it 'can fetch all items by min price' do
       min_price = 50
-      max_price = 150
 
       get "/api/v1/items/find_all?min_price=#{min_price}"
 
@@ -462,7 +455,6 @@ RSpec.describe 'Items API endpoints' do
     end
 
     it 'can fetch all items by max price' do
-      min_price = 50
       max_price = 150
 
       get "/api/v1/items/find_all?max_price=#{max_price}"
@@ -541,18 +533,16 @@ RSpec.describe 'Items API endpoints' do
 
     it 'cannot search by name and min price' do
       min_price = 50
-      max_price = 150
 
-      get "/api/v1/items/find_all?name=#{item1.name[0, 3]}&min_price=#{min_price}"
+      get "/api/v1/items/find_all?name=#{item1.name.to(4)}&min_price=#{min_price}"
 
       expect(response).to have_http_status(400)
     end
 
     it 'cannot search by name and max price' do
-      min_price = 50
       max_price = 150
 
-      get "/api/v1/items/find_all?name=#{item1.name[0, 3]}&max_price=#{max_price}"
+      get "/api/v1/items/find_all?name=#{item1.name.to(4)}&max_price=#{max_price}"
 
       expect(response).to have_http_status(400)
     end

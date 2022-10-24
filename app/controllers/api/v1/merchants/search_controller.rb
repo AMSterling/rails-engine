@@ -1,28 +1,29 @@
 class Api::V1::Merchants::SearchController < ApplicationController
-  before_action :param_validation
+  before_action :param_validation, :set_merchant, only: %i[index show]
 
   def index
-    merchants = Merchant.find_merchant(params[:name]).order(:name)
-    if merchants.empty?
-      render json: { data: [] }, status: 404
+    if @merchants.empty?
+      render json: { data: [] }, status: :not_found
     else
-      render json: MerchantSerializer.new(merchants)
+      render json: MerchantSerializer.new(@merchants)
     end
   end
 
   def show
-    merchants = Merchant.find_merchant(params[:name]).order(:name)
-      if merchants.empty?
-        render json: { data: {message: 'Merchant not found'} }
-      else
-        render json: MerchantSerializer.new(merchants.first)
-      end
+    if @merchants.empty?
+      render json: { data: { message: 'Merchant not found' } }
+    else
+      render json: MerchantSerializer.new(@merchants.first)
+    end
   end
 
   private
+  
   def param_validation
-    if !params[:name].present?
-      render json: { data: {} }, status: 400
-    end
+    render json: { data: {} }, status: :bad_request if params[:name].blank?
+  end
+
+  def set_merchant
+    @merchants = Merchant.find_merchant(params[:name]).order(:name)
   end
 end

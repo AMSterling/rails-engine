@@ -7,10 +7,10 @@ Rails.application.routes.draw do
       get 'merchants/find_all', to: 'merchants/search#index'
       get 'merchants/find', to: 'merchants/search#show'
 
-      resources :merchants, only: [:index, :show] do
+      resources :merchants, only: %i[index show] do
         get '/items', to: 'merchant_items#index'
       end
-      resources :items, only: [:index, :show, :create, :update, :destroy] do
+      resources :items, only: %i[index show create update destroy] do
         get '/merchant', to: 'item_merchant#show'
       end
     end
