@@ -1,5 +1,5 @@
 class Invoice < ApplicationRecord
-  validates_presence_of :status
+  validates :status, presence: true
 
   belongs_to :customer
   belongs_to :merchant
@@ -8,19 +8,19 @@ class Invoice < ApplicationRecord
   has_many :items, through: :invoice_items
 
   def self.delete_empty_invoice
-    single_item_invoices = includes(:items)
+    item_invoices = includes(:items)
     .group('invoices.id')
     .having('count(items) = 1')
     .pluck(:id)
-    Invoice.destroy(single_item_invoices)
+    Invoice.destroy(item_invoices)
   end
 end
 
 # def self.delete_empty_invoice
-  # single_item_invoices = joins(:items)
+  # item_invoices = joins(:items)
   # .select('invoices.*')
   # .group('invoices.id')
   # .having('count(items) = 1')
   # .pluck(:id)
-  # Invoice.destroy(single_item_invoices)
+  # Invoice.destroy(item_invoices)
 # end

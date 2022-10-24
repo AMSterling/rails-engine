@@ -23,19 +23,19 @@ RSpec.describe Item, type: :model do
     let!(:item4) { items.fourth }
     let!(:item5) { items.last }
 
-    describe '#find_name' do
+    describe '::filter_by_name' do
       it 'scopes items with fuzzy search by name' do
-        name_search = item1.name[0, 3]
+        name_search = item1.name.to(4)
 
-        Item.find_name(name_search).each do |item|
-          expect(item.name.downcase).to include(item1.name[0, 3].downcase)
+        Item.filter_by_name(name_search).each do |item|
+          expect(item.name.downcase).to include(item1.name.to(4).downcase)
         end
       end
 
       it 'scopes items with search through description' do
         name_search = item1.description
 
-        Item.find_name(name_search).each do |item|
+        Item.filter_by_name(name_search).each do |item|
           expect(item[:attributes][:name]).to eq(item1.name)
         end
       end
@@ -43,27 +43,27 @@ RSpec.describe Item, type: :model do
       it 'returns empty if no search matches name' do
         name_search = 'Junk'
 
-        Item.find_name(name_search).each do |item|
+        Item.filter_by_name(name_search).each do |item|
           expect(name_search).to eq nil
         end
       end
     end
 
-    describe '#find_min_price' do
+    describe '::filter_by_min_price' do
       it 'scopes items with unit price over specified amount' do
         min_price = 50
 
-        Item.find_min_price(min_price).each do |item|
+        Item.filter_by_min_price(min_price).each do |item|
           expect(item.unit_price).to be >= 50
         end
       end
     end
 
-    describe '#find_max_price' do
+    describe '::filter_by_max_price' do
       it 'scopes items with unit price under specified amount' do
         max_price = 50
 
-        Item.find_max_price(max_price).each do |item|
+        Item.filter_by_max_price(max_price).each do |item|
           expect(item.unit_price).to be <= 50
         end
       end

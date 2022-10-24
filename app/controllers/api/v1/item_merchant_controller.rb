@@ -7,6 +7,7 @@ class Api::V1::ItemMerchantController < ApplicationController
   end
 
   private
+  
   def item
     Item.find(params[:item_id])
   end

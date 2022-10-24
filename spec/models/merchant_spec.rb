@@ -21,10 +21,10 @@ RSpec.describe Merchant, type: :model do
 
     describe '#find_merchant' do
       it 'scopes merchants with fuzzy search by name' do
-        name_search = merchant1.name[0, 3]
+        name_search = merchant1.name.to(4)
 
         Merchant.find_merchant(name_search).each do |merchant|
-          expect(merchant.name.downcase).to include(merchant1.name[0, 3].downcase)
+          expect(merchant.name.downcase).to include(merchant1.name.to(4).downcase)
         end
       end
 
