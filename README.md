@@ -16,7 +16,7 @@
 
 ## Description
 
-Rails Engine is a Backend Service Oriented Architecture application. Front end repo can be found here.
+Rails Engine is a Backend Service Oriented Architecture application. Front end repo can be found <a href="https://github.com/AMSterling/rails_engine_fe">here</a>.
 
 <br>
 
@@ -39,13 +39,15 @@ Rails Engine is a Backend Service Oriented Architecture application. Front end r
         <li><a href="#all-merchants">All Merchants</a></li>
         <li><a href="#one-merchant">One Merchant</a></li>
         <li><a href="#find-merchant-by-name">Find Merchant By Name</a></li>
+        <li><a href="#find-all-merchants-by-name">Find All Merchants By Name</a></li>
         <li><a href="#merchant-items">Merchant Items</a></li>
         <li><a href="#all-items">All Items</a></li>
         <li><a href="#one-item">One Item</a></li>
         <li><a href="#create-item">Create Item</a></li>
         <li><a href="#update-item">Update Item</a></li>
         <li><a href="#delete-item">Delete Item</a></li>
-        <li><a href="#find-items-by-name">Find Items By Name</a></li>
+        <li><a href="#find-item-by-name">Find Item By Name</a></li>
+        <li><a href="#find-all-items-by-name">Find All Items By Name</a></li>
         <li><a href="#item-merchant">Item Merchant</a></li>
       </ul>
     </li>  
@@ -87,12 +89,15 @@ Fork and clone the project, then install the required gems with `bundle`. A full
 bundle install
 ```
 
-Reset the database:
+Reset and seed the database:
 
 ```sh
-rake db:{drop,create,migrate}
+rake db:{drop,create,migrate,seed}
 ```
 
+```sh
+rake db:schema:dump
+```
 Push to your preferred production server or in your terminal run
  ```sh
   rails server
@@ -119,15 +124,6 @@ Endpoints to use in Postman running a local server `rails s`
 
 * API end points
 
-  - All merchants - http://localhost:3000/api/v1/merchants
-  - One merchant - http://localhost:3000/api/v1/merchants/{{merchant_id}}
-  - Find merchant by name - http://localhost:3000/api/v1/merchants/find?name={{name}}
-  - Merchant items - 
-  - All tems - http://localhost:3000/api/v1/items
-  - One item - http://localhost:3000/api/v1/items/{{item_id}}
-  - Create item - POST 'http://localhost:3000/api/v1/items'
-  - Update item - PATCH 'http://localhost:3000/api/v1/items'
-  - Delete item - DELETE 'http://localhost:3000/api/v1/items/{{item_id}}'
   - Find all items by name - http://localhost:3000/api/v1/items/find_all?name={{name}}
   - Item merchant - http://localhost:3000/api/v1/items/{{item_id}}/merchant
 
@@ -137,29 +133,44 @@ Endpoints to use in Postman running a local server `rails s`
   GET http://localhost:3000/api/v1/merchants
 ```
 
-**Sample Response**
+**Sample Response(200)**
 
 ```sh
 {
     "data": [
         {
-            "id": null,
-            "type": "recipe",
+            "id": "1",
+            "type": "merchant",
             "attributes": {
-                "title": "Andy Ricker's Naam Cheuam Naam Taan Piip (Palm Sugar Simple Syrup)",
-                "url": "https://www.seriouseats.com/recipes/2013/11/andy-rickers-naam-cheuam-naam-taan-piip-palm-sugar-simple-syrup.html",
-                "country": "thailand",
-                "image": "https://edamam-product-images.s3.amazonaws.com..."
+                "name": "Schroeder-Jerde"
             }
         },
         {
-            "id": null,
-            "type": "recipe",
+            "id": "2",
+            "type": "merchant",
             "attributes": {
-                "title": "Sriracha",
-                "url": "http://www.jamieoliver.com/recipes/vegetables-recipes/sriracha/",
-                "country": "thailand",
-                "image": "https://edamam-product-images.s3.amazonaws.com/."
+                "name": "Klein, Rempel and Jones"
+            }
+        },
+        {
+            "id": "3",
+            "type": "merchant",
+            "attributes": {
+                "name": "Willms and Sons"
+            }
+        },
+        {
+            "id": "4",
+            "type": "merchant",
+            "attributes": {
+                "name": "Cummings-Thiel"
+            }
+        },
+        {
+            "id": "5",
+            "type": "merchant",
+            "attributes": {
+                "name": "Williamson Group"
             }
         },
         {...},
@@ -178,12 +189,28 @@ Endpoints to use in Postman running a local server `rails s`
   GET http://localhost:3000/api/v1/merchants/{{merchant_id}}
 ```
 
-**Sample Response(country missing from endpoint)**
+**Sample Response(200)**
 
 ```sh
-  {
-    "data": []
-  }
+{
+    "data": {
+        "id": "42",
+        "type": "merchant",
+        "attributes": {
+            "name": "Glover Inc"
+        }
+    }
+}
+```
+
+#### Merchant ID doesn't exist
+
+**Sample Response(404 Not Found)**
+
+```sh
+{
+    "error": "No merchant found"
+}
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -191,58 +218,100 @@ Endpoints to use in Postman running a local server `rails s`
 ### Find Merchant By Name
 
 ```sh
-  GET  http://localhost:3000/api/v1/merchants/find?name={{name}}
+  GET  http://localhost:3000/api/v1/merchants/find?name=iLl
 ```
 
-**Sample Response**
+**Sample Response(200)**
 
 ```sh
 {
     "data": {
-        "id": null,
-        "type": "learning_resource",
+        "id": "28",
+        "type": "merchant",
         "attributes": {
-            "country": "laos",
-            "video": {
-                "title": "A Super Quick History of Laos",
-                "youtube_video_id": "uw8hjVqxMXw"
-            },
-            "images": [
-                {
-                    "alt_tag": "standing statue and temples landmark during daytime",
-                    "url": "https://images.unsplash.com/photo-1528181304800-259b08848526?ixid=MnwzNzg2NzV8MHwxfHNlYXJjaHwxfHx0aGFpbGFuZHxlbnwwfHx8fDE2Njc4Njk1NTA&ixlib=rb-4.0.3"
-                },
-                {
-                    "alt_tag": "five brown wooden boats",
-                    "url": "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?ixid=MnwzNzg2NzV8MHwxfHNlYXJjaHwyfHx0aGFpbGFuZHxlbnwwfHx8fDE2Njc4Njk1NTA&ixlib=rb-4.0.3"
-                },
-                {
-                    "alt_tag": "orange temples during daytime",
-                    "url": "https://images.unsplash.com/photo-1563492065599-3520f775eeed?ixid=MnwzNzg2NzV8MHwxfHNlYXJjaHwzfHx0aGFpbGFuZHxlbnwwfHx8fDE2Njc4Njk1NTA&ixlib=rb-4.0.3"
-                },
-                {...},
-                {...},
-                {...},
-                {etc},
-              ]
+            "name": "Schiller, Barrows and Parker"
         }
     }
 }
 ```
 
-**Sample Response(no video or images found)**
+#### No search parameter given
+
+```sh
+  GET  http://localhost:3000/api/v1/merchants/find
+```
+
+**Sample Response(400 Bad Request)**
 
 ```sh
 {
-  "data": {
-      "id": null,
-      "type": "learning_resource",
-      "attributes": {
-          "country": "Nameofcountry", # this value is the value used to search for learning resources
-          "video": [],
-          "images": []
-      }
-  }
+    "data": {}
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Find All Merchants By Name
+
+```sh
+GET http://localhost:3000/api/v1/merchants/find_all?name=ILL
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": [
+        {
+            "id": "28",
+            "type": "merchant",
+            "attributes": {
+                "name": "Schiller, Barrows and Parker"
+            }
+        },
+        {
+            "id": "13",
+            "type": "merchant",
+            "attributes": {
+                "name": "Tillman Group"
+            }
+        },
+        {
+            "id": "5",
+            "type": "merchant",
+            "attributes": {
+                "name": "Williamson Group"
+            }
+        },
+        {
+            "id": "6",
+            "type": "merchant",
+            "attributes": {
+                "name": "Williamson Group"
+            }
+        },
+        {
+            "id": "3",
+            "type": "merchant",
+            "attributes": {
+                "name": "Willms and Sons"
+            }
+        }
+    ]
+}
+```
+
+#### No search parameter given
+
+```sh
+  GET  http://localhost:3000/api/v1/merchants/find_all?name=
+```
+
+**Sample Response(400 Bad Request)**
+
+```sh
+{
+    "data": {}
 }
 ```
 
@@ -254,134 +323,402 @@ Endpoints to use in Postman running a local server `rails s`
   GET http://localhost:3000/api/v1/merchants/{{merchant_id}}/items
 ```
 
-**Sample Body**
+**Sample Response(200)**
 
 ```sh
- {
-   "name": "Athena Dao",
-   "email": "athenadao@bestgirlever.com"
- }
+{
+    "data": [
+        {
+            "id": "2425",
+            "type": "item",
+            "attributes": {
+                "name": "Item Excepturi Rem",
+                "description": "Perferendis reprehenderit fugiat sit eos. Corporis ipsum ut. Natus molestiae quia rerum fugit quis. A cumque doloremque magni.",
+                "unit_price": 476.82,
+                "merchant_id": 99
+            }
+        },
+        {
+            "id": "2427",
+            "type": "item",
+            "attributes": {
+                "name": "Item Illum Minus",
+                "description": "Aut voluptatem aut officiis minima cum at. Est ea sed est quia repudiandae. Eum omnis rerum in adipisci aut. Deleniti sunt voluptatibus rerum aut quo omnis.",
+                "unit_price": 98.07,
+                "merchant_id": 99
+            }
+        },
+        {
+            "id": "2426",
+            "type": "item",
+            "attributes": {
+                "name": "Item Repellendus Cum",
+                "description": "Odio vitae asperiores sint ut labore. Tenetur perspiciatis facere quos cum. Optio modi consequatur.",
+                "unit_price": 612.11,
+                "merchant_id": 99
+            }
+        },
+        {
+            "id": "2397",
+            "type": "item",
+            "attributes": {
+                "name": "Item Iusto Voluptates",
+                "description": "Dolor sequi aut totam molestiae vel magni. Molestiae repudiandae impedit mollitia provident suscipit et. Voluptatum molestias iusto. Ullam minus quisquam consequatur consequuntur molestias. Consequatur voluptatum molestias ipsum.",
+                "unit_price": 42.65,
+                "merchant_id": 99
+            }
+        },
+        {
+            "id": "2398",
+            "type": "item",
+            "attributes": {
+                "name": "Item Maxime Corporis",
+                "description": "Dicta enim rerum. Laborum sit soluta. Quo occaecati blanditiis sunt. Sequi aut suscipit numquam eveniet ipsam repudiandae.",
+                "unit_price": 712.22,
+                "merchant_id": 99
+            }
+        },
+        {...},
+        {...},
+        {...},
+        {etc},
+    ]
+}
 ```
 
-**Sample Response**
+#### Merchant ID doesn't exist
+
+**Sample Response(404 Not Found)**
 
 ```sh
-  {
-    "data": {
-      "type": "user",
-      "id": "1",
-      "attributes": {
-        "name": "Athena Dao",
-        "email": "athenadao@bestgirlever.com",
-        "api_key": "jgn983hy48thw9begh98h4539h4"
-      }
-    }
-  }
+{
+    "error": "error"
+}
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### Add Favorite
+### All Items
 
 ```sh
-  POST '/api/v1/favorites'
+  GET http://localhost:3000/api/v1/items
 ```
 
-**Sample Body**
-
-```sh
- {
-    "api_key": "jgn983hy48thw9begh98h4539h4",
-    "country": "thailand",
-    "recipe_link": "https://www.tastingtable.com/.....",
-    "recipe_title": "Crab Fried Rice (Khaao Pad Bpu)"
- }
-```
-
-**Sample Response**
-
-```sh
- {
-    "success": "Favorite added successfully"
- }
-```
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-### Get Favorites
-
-```sh
-  GET '/api/v1/favorites'
-```
-
-**Sample Body**
-
-```sh
- {
-   "api_key": "jgn983hy48thw9begh98h4539h4"
- }
-```
-
-**Sample Response**
+**Sample Response(200)**
 
 ```sh
 {
    "data": [
        {
-           "id": "1",
-           "type": "favorite",
+           "id": "4",
+           "type": "item",
            "attributes": {
-               "recipe_title": "Recipe: Egyptian Tomato Soup",
-               "recipe_link": "http://www.thekitchn.com/recipe-egyptian-tomato-soup-weeknight....",
-               "country": "egypt",
-               "created_at": "2022-11-02T02:17:54.111Z"
+               "name": "Item Nemo Facere",
+               "description": "Sunt eum id eius magni consequuntur delectus veritatis. Quisquam laborum illo ut ab. Ducimus in est id voluptas autem.",
+               "unit_price": 42.91,
+               "merchant_id": 1
            }
        },
        {
-           "id": "2",
-           "type": "favorite",
+           "id": "5",
+           "type": "item",
            "attributes": {
-               "recipe_title": "Crab Fried Rice (Khaao Pad Bpu)",
-               "recipe_link": "https://www.tastingtable.com/.....",
-               "country": "thailand",
-               "created_at": "2022-11-07T03:44:08.917Z"
+               "name": "Item Expedita Aliquam",
+               "description": "Voluptate aut labore qui illum tempore eius. Corrupti cum et rerum. Enim illum labore voluptatem dicta consequatur. Consequatur sunt consequuntur ut officiis.",
+               "unit_price": 687.23,
+               "merchant_id": 1
            }
-       }
-   ]
-}    
+       },
+       {
+           "id": "6",
+           "type": "item",
+           "attributes": {
+               "name": "Item Provident At",
+               "description": "Numquam officiis reprehenderit eum ratione neque tenetur. Officia aut repudiandae eum at ipsum doloribus. Iure minus itaque similique. Ratione dicta alias asperiores minima ducimus nesciunt at.",
+               "unit_price": 159.25,
+               "merchant_id": 1
+           }
+       },
+       {
+           "id": "7",
+           "type": "item",
+           "attributes": {
+               "name": "Item Expedita Fuga",
+               "description": "Fuga assumenda occaecati hic dolorem tenetur dolores nisi. Est tenetur adipisci voluptatem vel. Culpa adipisci consequatur illo. Necessitatibus quis quo velit sed repellendus ut amet.",
+               "unit_price": 311.63,
+               "merchant_id": 1
+           }
+       },
+       {
+           "id": "8",
+           "type": "item",
+           "attributes": {
+               "name": "Item Est Consequuntur",
+               "description": "Reprehenderit est officiis cupiditate quia eos. Voluptatem illum reprehenderit quo vel eligendi. Et eum omnis id ut aliquid veniam.",
+               "unit_price": 343.55,
+               "merchant_id": 1
+           }
+       },
+       {...}
+    ]
+}
 ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-### Delete Favorite
+#### One Item
 
 ```sh
-  DELETE '/api/v1/favorites'
+  GET http://localhost:3000/api/v1/items/{{item_id}}
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": {
+        "id": "179",
+        "type": "item",
+        "attributes": {
+            "name": "Item Qui Veritatis",
+            "description": "Totam labore quia harum dicta eum consequatur qui. Corporis inventore consequatur. Illum facilis tempora nihil placeat rerum sint est. Placeat ut aut. Eligendi perspiciatis unde eum sapiente velit.",
+            "unit_price": 906.17,
+            "merchant_id": 9
+        }
+    }
+}
+```
+
+#### Item ID doesn't exist
+
+**Sample Response(404 Not Found)**
+
+```sh
+{
+    "error": "Item does not exist or is no longer available"
+}
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+### Create Item
+
+```sh
+POST http://localhost:3000/api/v1/items
+```
+
+**Sample Body**
+
+```sh
+{
+  "name": "{{item_name}}",
+  "description": "{{item_description}}",
+  "unit_price": {{item_price}},
+  "merchant_id": {{item_merchant_id}}
+}
+```
+
+**Sample Response(201 Created)**
+
+```sh
+{
+    "data": {
+        "id": "2549",
+        "type": "item",
+        "attributes": {
+            "name": "Shiny Itemy Item",
+            "description": "It does a lot of things real good.",
+            "unit_price": 123.45,
+            "merchant_id": 43
+        }
+    }
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Update Item
+
+```sh
+  PUT http://localhost:3000/api/v1/items/{{item_id}}
+```
+
+**Sample Body**
+
+```sh
+{
+    "name": "{{new_item_name}}",
+    "description": "{{new_item_description}}",
+    "unit_price": {{new_item_price}},
+    "merchant_id": {{new_item_merchant_id}}
+}
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": {
+        "id": "179",
+        "type": "item",
+        "attributes": {
+            "name": "Shiny Itemy Item, New and Improved",
+            "description": "It does a lot of things even more good than before!",
+            "unit_price": 65.23,
+            "merchant_id": 56
+        }
+    }
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Delete Item
+
+```sh
+  DELETE http://localhost:3000/api/v1/items/{{item_id}}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Find Item By Name
+
+```sh
+GET http://localhost:3000/api/v1/items/find?name=hArU
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": {
+        "id": "21",
+        "type": "item",
+        "attributes": {
+            "name": "Item Repellendus Harum",
+            "description": "Minus sit dolorum velit ratione. Et dolore accusantium quam perferendis repudiandae doloremque saepe. Velit illo doloremque.",
+            "unit_price": 636.65,
+            "merchant_id": 2
+        }
+    }
+}
+```
+
+#### Item name not passed in
+
+```sh
+GET http://localhost:3000/api/v1/items/find?name=
+```
+
+**Sample Response(400 Bad Request)**
+
+```sh
+{
+    "data": {},
+    "error": "error"
+}
+```
+
+### Find All Items By Name
+
+```sh
+GET http://localhost:3000/api/v1/items/find_all?name=hArU
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": [
+        {
+            "id": "21",
+            "type": "item",
+            "attributes": {
+                "name": "Item Repellendus Harum",
+                "description": "Minus sit dolorum velit ratione. Et dolore accusantium quam perferendis repudiandae doloremque saepe. Velit illo doloremque.",
+                "unit_price": 636.65,
+                "merchant_id": 2
+            }
+        },
+        {
+            "id": "62",
+            "type": "item",
+            "attributes": {
+                "name": "Item Harum Molestiae",
+                "description": "Fuga modi eos iusto nisi vero omnis. Blanditiis corrupti quibusdam deleniti qui. Quasi qui maiores tenetur omnis odit incidunt. Omnis ut tenetur. Expedita iure maxime.",
+                "unit_price": 609.45,
+                "merchant_id": 3
+            }
+        },
+        {
+            "id": "136",
+            "type": "item",
+            "attributes": {
+                "name": "Item Explicabo Harum",
+                "description": "Ut nihil harum quia. Odio neque qui molestiae. Eligendi fugiat consequatur. Id officiis fugit et. Illo autem est qui.",
+                "unit_price": 117.88,
+                "merchant_id": 8
+            }
+        },
+        {
+            "id": "313",
+            "type": "item",
+            "attributes": {
+                "name": "Item Harum Omnis",
+                "description": "Non modi voluptas fuga quidem explicabo. Nihil et consequatur sed sint. Dolorem sequi aut odit qui reprehenderit fugit.",
+                "unit_price": 708.91,
+                "merchant_id": 18
+            }
+        },
+        {
+            "id": "427",
+            "type": "item",
+            "attributes": {
+                "name": "Item Illum Harum",
+                "description": "Quod nobis deleniti sint ut. Nihil non enim natus aut. Occaecati adipisci repellat aut reprehenderit sit. Et modi praesentium ipsum sapiente maiores.",
+                "unit_price": 0.56,
+                "merchant_id": 22
+            }
+        },
+        {...}
+    ]
+}
+```
+
+#### Item search parameter not passed in
+
+```sh
+GET http://localhost:3000/api/v1/items/find_all
+```
+
+**Sample Response(400 Bad Request)**
+
+```sh
+{
+    "data": {},
+    "error": "error"
+}
+```
 
 ## Contact
 
 Anna Marie Sterling - [LinkedIn][linkedin-url]
 
-Project Link: [https://github.com/AMSterling/lunch-and-learn](https://github.com/AMSterling/lunch-and-learn)
+Project Link: [https://github.com/AMSterling/rails-engine](https://github.com/AMSterling/rails-engine)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
+
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/AMSterling/lunch-and-learn.svg?style=for-the-badge
-[contributors-url]: https://github.com/AMSterling/lunch-and-learn/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/AMSterling/lunch-and-learn.svg?style=for-the-badge
-[forks-url]: https://github.com/AMSterling/lunch-and-learn/network/members
-[stars-shield]: https://img.shields.io/github/stars/AMSterling/lunch-and-learn.svg?style=for-the-badge
-[stars-url]: https://github.com/AMSterling/lunch-and-learn/stargazers
-[issues-shield]: https://img.shields.io/github/issues/AMSterling/lunch-and-learn.svg?style=for-the-badge
-[issues-url]: https://github.com/AMSterling/lunch-and-learn/issues
-[license-shield]: https://img.shields.io/github/license/AMSterling/lunch-and-learn.svg?style=for-the-badge
-[license-url]: https://github.com/AMSterling/lunch-and-learn/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/AMSterling/rails-engine.svg?style=for-the-badge
+[contributors-url]: https://github.com/AMSterling/rails-engine/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/AMSterling/rails-engine.svg?style=for-the-badge
+[forks-url]: https://github.com/AMSterling/rails-engine/network/members
+[stars-shield]: https://img.shields.io/github/stars/AMSterling/rails-engine.svg?style=for-the-badge
+[stars-url]: https://github.com/AMSterling/rails-engine/stargazers
+[issues-shield]: https://img.shields.io/github/issues/AMSterling/rails-engine.svg?style=for-the-badge
+[issues-url]: https://github.com/AMSterling/rails-engine/issues
+[license-shield]: https://img.shields.io/github/license/AMSterling/rails-engine.svg?style=for-the-badge
+[license-url]: https://github.com/AMSterling/rails-engine/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/sterling-316a6223a/
 
@@ -401,7 +738,7 @@ Project Link: [https://github.com/AMSterling/lunch-and-learn](https://github.com
 [Fly-url]: https://fly.io/
 
 [GitHub Badge]: https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white
-[GitHub-url]: https://github.com/<Username>/
+[GitHub-url]: https://github.com/AMSterling/
 
 [Heroku]: https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white
 [Heroku-url]: https://www.heroku.com/
@@ -458,25 +795,3 @@ Project Link: [https://github.com/AMSterling/lunch-and-learn](https://github.com
 [simplecov-docs]: https://github.com/simplecov-ruby/simplecov
 [vcr-docs]: https://github.com/vcr/vcr
 [webmock-docs]: https://github.com/bblimke/webmock
-
-
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-  - rails db:{drop,create,migrate,seed}
-  - rails db:schema:dump
-
-* How to run the test suite
-   - bundle exec rspec
-
-* Services (job queues, cache servers, search engines, etc.)
-
-  - rails server
-
-* Deployment instructions
-
-  - run bundle install
