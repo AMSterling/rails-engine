@@ -183,7 +183,7 @@ Endpoints to use in Postman running a local server `rails s`
 ### One Merchant
 
 ```sh
-  GET http://localhost:3000/api/v1/merchants/{{merchant_id}}
+  GET http://localhost:3000/api/v1/merchants/42
 ```
 
 **Sample Response(200)**
@@ -316,7 +316,7 @@ GET http://localhost:3000/api/v1/merchants/find_all?name=ILL
 ### Merchant Items
 
 ```sh
-  GET http://localhost:3000/api/v1/merchants/{{merchant_id}}/items
+  GET http://localhost:3000/api/v1/merchants/99/items
 ```
 
 **Sample Response(200)**
@@ -466,7 +466,7 @@ GET http://localhost:3000/api/v1/merchants/string-instead-of-integer/items
 #### One Item
 
 ```sh
-  GET http://localhost:3000/api/v1/items/{{item_id}}
+  GET http://localhost:3000/api/v1/items/179
 ```
 
 **Sample Response(200)**
@@ -540,7 +540,7 @@ POST http://localhost:3000/api/v1/items
 ### Update Item
 
 ```sh
-  PUT http://localhost:3000/api/v1/items/{{item_id}}
+  PUT http://localhost:3000/api/v1/items/179
 ```
 
 **Sample Body**
@@ -896,6 +896,7 @@ GET http://localhost:3000/api/v1/items/find_all
 ```sh
 GET http://localhost:3000/api/v1/items/find_all?min_price=500000000
 GET http://localhost:3000/api/v1/items/find_all?max_price=-5
+GET http://localhost:3000/api/v1/items/find_all?max_price=1000&min_price=999
 ```
 
 **Sample Response(400 Bad Request - Price out of range)**
