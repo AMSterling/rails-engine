@@ -180,7 +180,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-#### One Merchant
+### One Merchant
 
 ```sh
   GET http://localhost:3000/api/v1/merchants/{{merchant_id}}
