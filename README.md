@@ -16,7 +16,7 @@
 
 ## Description
 
-Rails Engine is a Backend Service Oriented Architecture application. Front end repo can be found <a href="https://github.com/AMSterling/rails_engine_fe">here</a>.
+Rails Engine is a Backend Service Oriented Architecture application. <a href="https://github.com/AMSterling/rails_engine_fe">Rails Engine Front End Repo</a>.
 
 <br>
 
