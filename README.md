@@ -673,6 +673,8 @@ Endpoints to use in Postman running a local server `rails s`
 }
 ```
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ```sh
   GET http://localhost:3000/api/v1/items/find?min_price=
   GET http://localhost:3000/api/v1/items/find?max_price=
@@ -686,8 +688,6 @@ Endpoints to use in Postman running a local server `rails s`
     "error": "error"
 }
 ```
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ```sh
   GET http://localhost:3000/api/v1/items/find?min_price=-5
@@ -705,9 +705,6 @@ Endpoints to use in Postman running a local server `rails s`
     "error": "error"
 }
 ```
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 ```sh
   GET http://localhost:3000/api/v1/items/find?name=ring&max_price=50
@@ -880,6 +877,8 @@ Endpoints to use in Postman running a local server `rails s`
 }
 ```
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ```sh
   GET http://localhost:3000/api/v1/items/find_all
 ```
@@ -892,8 +891,6 @@ Endpoints to use in Postman running a local server `rails s`
     "error": "error"
 }
 ```
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ```sh
   GET http://localhost:3000/api/v1/items/find_all?min_price=500000000
@@ -909,8 +906,6 @@ Endpoints to use in Postman running a local server `rails s`
     "error": "error"
 }
 ```
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ```sh
   GET http://localhost:3000/api/v1/items/find_all?name=ring&max_price=50
