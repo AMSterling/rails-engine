@@ -200,9 +200,12 @@ Endpoints to use in Postman running a local server `rails s`
 }
 ```
 
-#### Merchant ID doesn't exist
+```sh
+GET http://localhost:3000/api/v1/merchants/8923987297
+GET http://localhost:3000/api/v1/merchants/string-instead-of-integer
+```
 
-**Sample Response(404 Not Found)**
+**Sample Response(404 Not Found - Merchant ID doesn't exist)**
 
 ```sh
 {
@@ -232,13 +235,11 @@ Endpoints to use in Postman running a local server `rails s`
 }
 ```
 
-#### No search parameter given
-
 ```sh
   GET  http://localhost:3000/api/v1/merchants/find
 ```
 
-**Sample Response(400 Bad Request)**
+**Sample Response(400 Bad Request - No search parameter given)**
 
 ```sh
 {
@@ -298,13 +299,11 @@ GET http://localhost:3000/api/v1/merchants/find_all?name=ILL
 }
 ```
 
-#### No search parameter given
-
 ```sh
   GET  http://localhost:3000/api/v1/merchants/find_all?name=
 ```
 
-**Sample Response(400 Bad Request)**
+**Sample Response(400 Bad Request - No search parameter given)**
 
 ```sh
 {
@@ -383,9 +382,12 @@ GET http://localhost:3000/api/v1/merchants/find_all?name=ILL
 }
 ```
 
-#### Merchant ID doesn't exist
+```sh
+GET http://localhost:3000/api/v1/merchants/8923987297/items
+GET http://localhost:3000/api/v1/merchants/string-instead-of-integer/items
+```
 
-**Sample Response(404 Not Found)**
+**Sample Response(404 Not Found - Merchant ID doesn't exist)**
 
 ```sh
 {
@@ -484,9 +486,12 @@ GET http://localhost:3000/api/v1/merchants/find_all?name=ILL
 }
 ```
 
-#### Item ID doesn't exist
+```sh
+GET http://localhost:3000/api/v1/items/456468146546
+GET http://localhost:3000/api/v1/items/string-instead-of-integer
+```
 
-**Sample Response(404 Not Found)**
+**Sample Response(404 Not Found - Item ID doesn't exist)**
 
 ```sh
 {
@@ -574,6 +579,14 @@ POST http://localhost:3000/api/v1/items
   DELETE http://localhost:3000/api/v1/items/{{item_id}}
 ```
 
+**Sample Response(404 Not found)**
+
+```sh
+{
+    "error": "error"
+}
+```
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Find Item By Name
@@ -599,13 +612,11 @@ GET http://localhost:3000/api/v1/items/find?name=hArU
 }
 ```
 
-#### Item name not passed in
-
 ```sh
 GET http://localhost:3000/api/v1/items/find?name=
 ```
 
-**Sample Response(400 Bad Request)**
+**Sample Response(400 Bad Request - Item name not passed in)**
 
 ```sh
 {
@@ -639,13 +650,68 @@ GET http://localhost:3000/api/v1/items/find?min_price=50
 }
 ```
 
-#### Item price not passed in
+```sh
+GET http://localhost:3000/api/v1/items/find?max_price=150
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": {
+        "id": "839",
+        "type": "item",
+        "attributes": {
+            "name": "Item A Non",
+            "description": "Ratione consequatur ipsam quia saepe voluptatem sed blanditiis. Eaque rerum eos ullam quo nostrum distinctio. Ut ad et quos sunt repellendus soluta.",
+            "unit_price": 14.11,
+            "merchant_id": 37
+        }
+    }
+}
+```
 
 ```sh
 GET http://localhost:3000/api/v1/items/find?min_price=
+GET http://localhost:3000/api/v1/items/find?max_price=
 ```
 
-**Sample Response(400 Bad Request)**
+**Sample Response(400 Bad Request - Item price not passed in)**
+
+```sh
+{
+    "data": {},
+    "error": "error"
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+```sh
+GET http://localhost:3000/api/v1/items/find?min_price=-5
+GET http://localhost:3000/api/v1/items/find?min_price=500000000
+GET http://localhost:3000/api/v1/items/find?max_price=-5
+GET http://localhost:3000/api/v1/items/find?max_price=1.99
+GET http://localhost:3000/api/v1/items/find?min_price=50&max_price=5
+```
+
+**Sample Response(400 Bad Request - Price out of range)**
+
+```sh
+{
+    "data": {},
+    "error": "error"
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+```sh
+GET http://localhost:3000/api/v1/items/find?name=ring&max_price=50
+```
+
+**Sample Response(400 Bad Request - Name and Price)**
 
 ```sh
 {
@@ -769,13 +835,85 @@ GET http://localhost:3000/api/v1/items/find_all?min_price=999
 }
 ```
 
-#### Item search parameter not passed in
+```sh
+GET http://localhost:3000/api/v1/items/find_all?max_price=1000&min_price=999
+```
+
+**Sample Response(200 - price range)**
+
+```sh
+{
+    "data": [
+        {
+            "id": "1708",
+            "type": "item",
+            "attributes": {
+                "name": "Item Eos Similique",
+                "description": "Minima ex voluptatem provident voluptatem sapiente reiciendis adipisci. Eius nihil neque. Architecto omnis sunt voluptatem ratione dignissimos fuga. Sint tenetur maiores sapiente eos placeat. Sit sed perspiciatis.",
+                "unit_price": 999.94,
+                "merchant_id": 69
+            }
+        },
+        {
+            "id": "1063",
+            "type": "item",
+            "attributes": {
+                "name": "Item Et Dolorem",
+                "description": "Quo aut architecto eum suscipit. Cumque blanditiis aut beatae recusandae. Dolores ut accusantium deleniti.",
+                "unit_price": 999.54,
+                "merchant_id": 47
+            }
+        },
+        {
+            "id": "1711",
+            "type": "item",
+            "attributes": {
+                "name": "Item Quaerat Expedita",
+                "description": "Sed consequatur in atque odit ex quae perspiciatis. Ut aut quos. Reiciendis rem excepturi ex explicabo dolore. Aliquam deserunt sed voluptas.",
+                "unit_price": 999.88,
+                "merchant_id": 70
+            }
+        }
+    ]
+}
+```
 
 ```sh
 GET http://localhost:3000/api/v1/items/find_all
 ```
 
-**Sample Response(400 Bad Request)**
+**Sample Response(400 Bad Request - Item search parameter not passed in)**
+
+```sh
+{
+    "data": {},
+    "error": "error"
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+```sh
+GET http://localhost:3000/api/v1/items/find_all?min_price=500000000
+GET http://localhost:3000/api/v1/items/find_all?max_price=-5
+```
+
+**Sample Response(400 Bad Request - Price out of range)**
+
+```sh
+{
+    "data": {},
+    "error": "error"
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+```sh
+GET http://localhost:3000/api/v1/items/find_all?name=ring&max_price=50
+```
+
+**Sample Response(400 Bad Request - Name and Price)**
 
 ```sh
 {
