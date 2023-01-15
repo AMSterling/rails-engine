@@ -124,11 +124,6 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
 Endpoints to use in Postman running a local server `rails s`
 
-* API end points
-
-  - Find all items by name - http://localhost:3000/api/v1/items/find_all?name={{name}}
-  - Item merchant - http://localhost:3000/api/v1/items/{{item_id}}/merchant
-
 ### All Merchants
 
 ```sh
