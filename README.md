@@ -201,8 +201,8 @@ Endpoints to use in Postman running a local server `rails s`
 ```
 
 ```sh
-GET http://localhost:3000/api/v1/merchants/8923987297
-GET http://localhost:3000/api/v1/merchants/string-instead-of-integer
+  GET http://localhost:3000/api/v1/merchants/8923987297
+  GET http://localhost:3000/api/v1/merchants/string-instead-of-integer
 ```
 
 **Sample Response(404 Not Found - Merchant ID doesn't exist)**
@@ -252,7 +252,7 @@ GET http://localhost:3000/api/v1/merchants/string-instead-of-integer
 ### Find All Merchants By Name
 
 ```sh
-GET http://localhost:3000/api/v1/merchants/find_all?name=ILL
+  GET http://localhost:3000/api/v1/merchants/find_all?name=ILL
 ```
 
 **Sample Response(200)**
@@ -383,8 +383,8 @@ GET http://localhost:3000/api/v1/merchants/find_all?name=ILL
 ```
 
 ```sh
-GET http://localhost:3000/api/v1/merchants/8923987297/items
-GET http://localhost:3000/api/v1/merchants/string-instead-of-integer/items
+  GET http://localhost:3000/api/v1/merchants/8923987297/items
+  GET http://localhost:3000/api/v1/merchants/string-instead-of-integer/items
 ```
 
 **Sample Response(404 Not Found - Merchant ID doesn't exist)**
@@ -487,8 +487,8 @@ GET http://localhost:3000/api/v1/merchants/string-instead-of-integer/items
 ```
 
 ```sh
-GET http://localhost:3000/api/v1/items/456468146546
-GET http://localhost:3000/api/v1/items/string-instead-of-integer
+  GET http://localhost:3000/api/v1/items/456468146546
+  GET http://localhost:3000/api/v1/items/string-instead-of-integer
 ```
 
 **Sample Response(404 Not Found - Item ID doesn't exist)**
@@ -504,7 +504,7 @@ GET http://localhost:3000/api/v1/items/string-instead-of-integer
 ### Create Item
 
 ```sh
-POST http://localhost:3000/api/v1/items
+  POST http://localhost:3000/api/v1/items
 ```
 
 **Sample Body**
@@ -592,7 +592,7 @@ POST http://localhost:3000/api/v1/items
 ### Find Item By Name
 
 ```sh
-GET http://localhost:3000/api/v1/items/find?name=hArU
+  GET http://localhost:3000/api/v1/items/find?name=hArU
 ```
 
 **Sample Response(200)**
@@ -613,7 +613,7 @@ GET http://localhost:3000/api/v1/items/find?name=hArU
 ```
 
 ```sh
-GET http://localhost:3000/api/v1/items/find?name=
+  GET http://localhost:3000/api/v1/items/find?name=
 ```
 
 **Sample Response(400 Bad Request - Item name not passed in)**
@@ -630,7 +630,7 @@ GET http://localhost:3000/api/v1/items/find?name=
 ### Find Item By Price
 
 ```sh
-GET http://localhost:3000/api/v1/items/find?min_price=50
+  GET http://localhost:3000/api/v1/items/find?min_price=50
 ```
 
 **Sample Response(200)**
@@ -651,7 +651,7 @@ GET http://localhost:3000/api/v1/items/find?min_price=50
 ```
 
 ```sh
-GET http://localhost:3000/api/v1/items/find?max_price=150
+  GET http://localhost:3000/api/v1/items/find?max_price=150
 ```
 
 **Sample Response(200)**
@@ -672,8 +672,8 @@ GET http://localhost:3000/api/v1/items/find?max_price=150
 ```
 
 ```sh
-GET http://localhost:3000/api/v1/items/find?min_price=
-GET http://localhost:3000/api/v1/items/find?max_price=
+  GET http://localhost:3000/api/v1/items/find?min_price=
+  GET http://localhost:3000/api/v1/items/find?max_price=
 ```
 
 **Sample Response(400 Bad Request - Item price not passed in)**
@@ -688,11 +688,11 @@ GET http://localhost:3000/api/v1/items/find?max_price=
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ```sh
-GET http://localhost:3000/api/v1/items/find?min_price=-5
-GET http://localhost:3000/api/v1/items/find?min_price=500000000
-GET http://localhost:3000/api/v1/items/find?max_price=-5
-GET http://localhost:3000/api/v1/items/find?max_price=1.99
-GET http://localhost:3000/api/v1/items/find?min_price=50&max_price=5
+  GET http://localhost:3000/api/v1/items/find?min_price=-5
+  GET http://localhost:3000/api/v1/items/find?min_price=500000000
+  GET http://localhost:3000/api/v1/items/find?max_price=-5
+  GET http://localhost:3000/api/v1/items/find?max_price=1.99
+  GET http://localhost:3000/api/v1/items/find?min_price=50&max_price=5
 ```
 
 **Sample Response(400 Bad Request - Price out of range)**
@@ -708,7 +708,7 @@ GET http://localhost:3000/api/v1/items/find?min_price=50&max_price=5
 
 
 ```sh
-GET http://localhost:3000/api/v1/items/find?name=ring&max_price=50
+  GET http://localhost:3000/api/v1/items/find?name=ring&max_price=50
 ```
 
 **Sample Response(400 Bad Request - Name and Price)**
@@ -725,7 +725,7 @@ GET http://localhost:3000/api/v1/items/find?name=ring&max_price=50
 ### Find All Items By Name
 
 ```sh
-GET http://localhost:3000/api/v1/items/find_all?name=hArU
+  GET http://localhost:3000/api/v1/items/find_all?name=hArU
 ```
 
 **Sample Response(200)**
@@ -793,7 +793,7 @@ GET http://localhost:3000/api/v1/items/find_all?name=hArU
 ### Find All Items By Price
 
 ```sh
-GET http://localhost:3000/api/v1/items/find_all?min_price=999
+  GET http://localhost:3000/api/v1/items/find_all?min_price=999
 ```
 
 **Sample Response(200)**
@@ -836,7 +836,7 @@ GET http://localhost:3000/api/v1/items/find_all?min_price=999
 ```
 
 ```sh
-GET http://localhost:3000/api/v1/items/find_all?max_price=1000&min_price=999
+  GET http://localhost:3000/api/v1/items/find_all?max_price=1000&min_price=999
 ```
 
 **Sample Response(200 - price range)**
@@ -879,7 +879,7 @@ GET http://localhost:3000/api/v1/items/find_all?max_price=1000&min_price=999
 ```
 
 ```sh
-GET http://localhost:3000/api/v1/items/find_all
+  GET http://localhost:3000/api/v1/items/find_all
 ```
 
 **Sample Response(400 Bad Request - Item search parameter not passed in)**
@@ -894,9 +894,9 @@ GET http://localhost:3000/api/v1/items/find_all
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ```sh
-GET http://localhost:3000/api/v1/items/find_all?min_price=500000000
-GET http://localhost:3000/api/v1/items/find_all?max_price=-5
-GET http://localhost:3000/api/v1/items/find_all?max_price=1000&min_price=999
+  GET http://localhost:3000/api/v1/items/find_all?min_price=500000000
+  GET http://localhost:3000/api/v1/items/find_all?max_price=-5
+  GET http://localhost:3000/api/v1/items/find_all?max_price=1000&min_price=999
 ```
 
 **Sample Response(400 Bad Request - Price out of range)**
@@ -911,7 +911,7 @@ GET http://localhost:3000/api/v1/items/find_all?max_price=1000&min_price=999
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ```sh
-GET http://localhost:3000/api/v1/items/find_all?name=ring&max_price=50
+  GET http://localhost:3000/api/v1/items/find_all?name=ring&max_price=50
 ```
 
 **Sample Response(400 Bad Request - Name and Price)**
