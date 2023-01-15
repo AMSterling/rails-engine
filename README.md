@@ -47,7 +47,9 @@ Rails Engine is a Backend Service Oriented Architecture application. Front end r
         <li><a href="#update-item">Update Item</a></li>
         <li><a href="#delete-item">Delete Item</a></li>
         <li><a href="#find-item-by-name">Find Item By Name</a></li>
+        <li><a href="#find-item-by-price">Find Item By Price</a></li>
         <li><a href="#find-all-items-by-name">Find All Items By Name</a></li>
+        <li><a href="#find-all-items-by-price">Find All Items By Price</a></li>
         <li><a href="#item-merchant">Item Merchant</a></li>
       </ul>
     </li>  
@@ -617,6 +619,48 @@ GET http://localhost:3000/api/v1/items/find?name=
 }
 ```
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Find Item By Price
+
+```sh
+GET http://localhost:3000/api/v1/items/find?min_price=50
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": {
+        "id": "2352",
+        "type": "item",
+        "attributes": {
+            "name": "Item A Error",
+            "description": "Exercitationem rerum porro illo quam molestiae fugiat. Est sit consequatur magnam qui. Officia fugit corporis aliquam enim consectetur.",
+            "unit_price": 285.96,
+            "merchant_id": 97
+        }
+    }
+}
+```
+
+#### Item price not passed in
+
+```sh
+GET http://localhost:3000/api/v1/items/find?min_price=
+```
+
+**Sample Response(400 Bad Request)**
+
+```sh
+{
+    "data": {},
+    "error": "error"
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ### Find All Items By Name
 
 ```sh
@@ -683,6 +727,53 @@ GET http://localhost:3000/api/v1/items/find_all?name=hArU
 }
 ```
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Find All Items By Price
+
+```sh
+GET http://localhost:3000/api/v1/items/find_all?min_price=999
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": [
+        {
+            "id": "1708",
+            "type": "item",
+            "attributes": {
+                "name": "Item Eos Similique",
+                "description": "Minima ex voluptatem provident voluptatem sapiente reiciendis adipisci. Eius nihil neque. Architecto omnis sunt voluptatem ratione dignissimos fuga. Sint tenetur maiores sapiente eos placeat. Sit sed perspiciatis.",
+                "unit_price": 999.94,
+                "merchant_id": 69
+            }
+        },
+        {
+            "id": "1063",
+            "type": "item",
+            "attributes": {
+                "name": "Item Et Dolorem",
+                "description": "Quo aut architecto eum suscipit. Cumque blanditiis aut beatae recusandae. Dolores ut accusantium deleniti.",
+                "unit_price": 999.54,
+                "merchant_id": 47
+            }
+        },
+        {
+            "id": "1711",
+            "type": "item",
+            "attributes": {
+                "name": "Item Quaerat Expedita",
+                "description": "Sed consequatur in atque odit ex quae perspiciatis. Ut aut quos. Reiciendis rem excepturi ex explicabo dolore. Aliquam deserunt sed voluptas.",
+                "unit_price": 999.88,
+                "merchant_id": 70
+            }
+        }
+    ]
+}
+```
+
 #### Item search parameter not passed in
 
 ```sh
@@ -697,6 +788,8 @@ GET http://localhost:3000/api/v1/items/find_all
     "error": "error"
 }
 ```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Contact
 
