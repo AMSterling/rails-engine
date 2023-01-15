@@ -61,6 +61,8 @@ Rails Engine is a Backend Service Oriented Architecture application. Front end r
 <!-- Architecture -->
 ## Architecture
 
+# <img src="app/assets/images/RailsEngineSchema.png">
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
