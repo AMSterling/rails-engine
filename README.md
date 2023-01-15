@@ -465,7 +465,7 @@ Endpoints to use in Postman running a local server `rails s`
 }
 ```
 
-#### One Item
+### One Item
 
 ```sh
   GET http://localhost:3000/api/v1/items/179
