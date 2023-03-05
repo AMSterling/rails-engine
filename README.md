@@ -1,6 +1,13 @@
 <a name="readme-top"></a>
 
 <!-- PROJECT SHIELDS -->
+
+<div align="right">
+
+[![Maintainability](https://api.codeclimate.com/v1/badges/26f1b36435ef838c9599/maintainability)](https://codeclimate.com/github/AMSterling/rails-engine/maintainability)
+
+</div>
+
 [![Contributors][contributors-shield]][contributors-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
