@@ -14,7 +14,7 @@ RSpec.describe Invoice, type: :model do
   end
 
   describe 'class methods' do
-    let!(:invoices) { create_list(:invoice, 5) }
+    let!(:invoices) { create_list(:invoice_with_transactions, 5) }
     let!(:invoice1) { invoices.first }
     let!(:invoice2) { invoices.second }
     let!(:invoice3) { invoices.third }
