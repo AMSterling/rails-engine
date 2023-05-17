@@ -1,8 +1,9 @@
 FactoryBot.define do
   factory :invoice_item do
-    item { create(:item) }
+    item # { create(:item) }
     invoice { create(:invoice) }
     quantity { Faker::Number.non_zero_digit }
-    unit_price { (item.unit_price * quantity).round(2) }
+    unit_price { (item.unit_price) }
+    # unit_price { (item.unit_price * quantity).round(2) }
   end
 end
