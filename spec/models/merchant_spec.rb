@@ -51,12 +51,17 @@ RSpec.describe Merchant, type: :model do
     describe '#most_items_sold' do
       it 'returns specified quantity fo merchants with most items sold' do
         qty = 3
+        result = Merchant.most_items_sold(qty)
 
-        expect(Merchant.most_items_sold(qty)).to eq([
-          [merchant3.id, merchant3.name, Merchant.most_items_sold(qty)[0][2]],
-          [merchant2.id, merchant2.name, Merchant.most_items_sold(qty)[1][2]],
-          [merchant1.id, merchant1.name, Merchant.most_items_sold(qty)[2][2]]
-          ])
+        expect(result).to be_an Array
+        expect(result[0]).to include(id: merchant3.id.to_s)
+        expect(result[1]).to include(id: merchant2.id.to_s)
+        expect(result[2]).to include(id: merchant1.id.to_s)
+        result.each do |merch|
+          expect(merch).to be_a Hash
+          expect(merch.keys).to eq([:id, :type, :attributes])
+          expect(merch[:attributes].keys).to eq([:name, :count])
+        end
       end
     end
 
