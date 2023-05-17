@@ -38,7 +38,7 @@ class Merchant < ApplicationRecord
   end
 
   def self.highest_revenue(arg)
-    joins(invoices: [:invoice_items, :transactions])
+    rev = joins(invoices: [:invoice_items, :transactions])
     .select('merchants.id, merchants.name, sum(invoice_items.quantity * invoice_items.unit_price) as total_revenue')
     .where('transactions.result =?', 'success')
     .group('merchants.id')
