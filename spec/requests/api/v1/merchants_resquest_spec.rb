@@ -1,12 +1,22 @@
 require 'rails_helper'
 
 describe 'Merchants API endpoints' do
-  let!(:merchants) { create_list(:merchant, 5) }
+  let!(:merchants) { create_list(:merchant_with_items, 5) }
   let!(:merchant1) { merchants.first }
   let!(:merchant2) { merchants.second }
   let!(:merchant3) { merchants.third }
   let!(:merchant4) { merchants.fourth }
   let!(:merchant5) { merchants.fifth }
+  let!(:m1_invoice) { create(:invoice_with_transactions, transactions_count: 2, merchant: merchant1, status: 'shipped') }
+  let!(:m2_invoice) { create(:invoice_with_transactions, transactions_count: 2, merchant: merchant2, status: 'shipped') }
+  let!(:m3_invoice) { create(:invoice_with_transactions, merchant: merchant3, status: 'shipped') }
+  let!(:m4_invoice) { create(:invoice_with_transactions, merchant: merchant4, status: 'shipped') }
+  let!(:m1ii1) { create(:invoice_item, invoice: m1_invoice, item: merchant1.items[0], quantity: 6000) }
+  let!(:m1ii2) { create(:invoice_item, invoice: m1_invoice, item: merchant1.items[1], quantity: 4000) }
+  let!(:m2ii1) { create(:invoice_item, invoice: m2_invoice, item: merchant2.items[0], quantity: 1000) }
+  let!(:m2ii2) { create(:invoice_item, invoice: m2_invoice, item: merchant2.items[2], quantity: 800) }
+  let!(:m3ii1) { create(:invoice_item, invoice: m3_invoice, item: merchant3.items[0], quantity: 10) }
+  let!(:m4ii1) { create(:invoice_item, invoice: m4_invoice, item: merchant4.items[0], quantity: 1) }
 
   describe 'merchant index and show' do
     it 'sends a list of all merchants' do
@@ -60,7 +70,6 @@ describe 'Merchants API endpoints' do
 
   describe 'merchant items' do
     it 'returns all items from the merchant' do
-      create_list(:item, 5, merchant_id: merchant1.id)
 
       get "/api/v1/merchants/#{merchant1.id}/items"
 
@@ -188,6 +197,38 @@ describe 'Merchants API endpoints' do
       merchant = response_body[:data]
 
       expect(merchant).to eq({})
+    end
+
+  end
+
+  describe 'most items' do
+    it 'returns variable number of merchants with most items sold' do
+      quantity = 2
+
+      get "/api/v1/merchants/most_items?quantity=#{quantity}"
+
+      expect(response).to be_successful
+
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      merchants = response_body[:data]
+
+      expect(merchants.count).to eq(2)
+
+      merchants.each do |merchant|
+        expect(merchant).to have_key(:id)
+        expect(merchant[:id]).to be_a(String)
+        expect(merchant).to have_key(:type)
+        expect(merchant[:type]).to be_a(String)
+        expect(merchant[:type]).to eq('items_sold')
+
+        expect(merchant).to have_key(:attributes)
+        expect(merchant[:attributes]).to have_key(:name)
+        expect(merchant[:attributes][:name]).to be_a(String)
+        expect(merchant[:attributes]).to have_key(:count)
+        expect(merchant[:attributes][:count]).to be_an(Integer)
+        expect(merchant[:attributes]).to_not have_key(:created_at)
+      end
+
     end
   end
 end
