@@ -1,11 +1,13 @@
 class Invoice < ApplicationRecord
-  validates :status, presence: true
+  validates :status, presence: true, inclusion: { in: %w(packaged shipped returned) }
 
   belongs_to :customer
   belongs_to :merchant
-  has_many :transactions
-  has_many :invoice_items, dependent: :destroy
+  has_many :transactions, dependent: :destroy
+  has_many :invoice_items, dependent: :destroy#,  -> { order('sum("quantity")') },
   has_many :items, through: :invoice_items
+
+  # scope :successful_by_quantity, -> { includes(:invoice_items, :transactions).where(transactions: {result: "success"}).select('invoice_items.*').order('invoice_items.quantity') }
 
   def self.delete_empty_invoice
     item_invoices = includes(:items)
