@@ -214,7 +214,7 @@ RSpec.describe 'Merchants API endpoints' do
 
   describe 'most items' do
     context 'when valid quantity' do
-      it 'returns variable number of merchants with most items sold' do
+      it 'fetches queried number of merchants with most items sold' do
         quantity = 2
 
         get "/api/v1/merchants/most_items?quantity=#{quantity}"
