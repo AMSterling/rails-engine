@@ -11,12 +11,14 @@ describe 'Merchants API endpoints' do
   let!(:m2_invoice) { create(:invoice_with_transactions, transactions_count: 2, merchant: merchant2, status: 'shipped') }
   let!(:m3_invoice) { create(:invoice_with_transactions, merchant: merchant3, status: 'shipped') }
   let!(:m4_invoice) { create(:invoice_with_transactions, merchant: merchant4, status: 'shipped') }
+  let!(:m5_invoice) { create(:invoice_with_transactions, merchant: merchant5) }
   let!(:m1ii1) { create(:invoice_item, invoice: m1_invoice, item: merchant1.items[0], quantity: 6000) }
   let!(:m1ii2) { create(:invoice_item, invoice: m1_invoice, item: merchant1.items[1], quantity: 4000) }
   let!(:m2ii1) { create(:invoice_item, invoice: m2_invoice, item: merchant2.items[0], quantity: 1000) }
   let!(:m2ii2) { create(:invoice_item, invoice: m2_invoice, item: merchant2.items[2], quantity: 800) }
   let!(:m3ii1) { create(:invoice_item, invoice: m3_invoice, item: merchant3.items[0], quantity: 10) }
   let!(:m4ii1) { create(:invoice_item, invoice: m4_invoice, item: merchant4.items[0], quantity: 1) }
+  let!(:m5ii1) { create(:invoice_item, invoice: m5_invoice, item: merchant5.items[4], quantity: 0) }
 
   describe 'merchant index and show' do
     it 'sends a list of all merchants' do
@@ -157,78 +159,151 @@ describe 'Merchants API endpoints' do
   end
 
   describe 'find all merchants' do
-    it 'can find all merchants by name case insensitive' do
-      get "/api/v1/merchants/find_all?name=#{merchant1.name.to(4)}"
+    context 'when valid' do
+      it 'can find all merchants by name case insensitive' do
+        get "/api/v1/merchants/find_all?name=#{merchant1.name.to(4)}"
 
-      expect(response).to be_successful
+        expect(response).to be_successful
 
-      response_body = JSON.parse(response.body, symbolize_names: true)
-      merchants = response_body[:data]
+        response_body = JSON.parse(response.body, symbolize_names: true)
+        merchants = response_body[:data]
 
-      merchants.each do |merchant|
-        expect(merchant).to have_key(:id)
-        expect(merchant[:id]).to be_a(String)
+        merchants.each do |merchant|
+          expect(merchant).to have_key(:id)
+          expect(merchant[:id]).to be_a(String)
 
-        expect(merchant).to have_key(:attributes)
-        expect(merchant[:attributes][:name]).to be_a(String)
-        expect(merchant[:attributes][:name]).to include(merchant1.name.to(4))
-        expect(merchant[:attributes]).to_not have_key(:created_at)
+          expect(merchant).to have_key(:attributes)
+          expect(merchant[:attributes][:name]).to be_a(String)
+          expect(merchant[:attributes][:name]).to include(merchant1.name.to(4))
+          expect(merchant[:attributes]).to_not have_key(:created_at)
+        end
       end
     end
 
-    it 'returns 404 if no merchant matches search by name' do
-      search_name = 'Junk'
+    context 'when invalid' do
+      it 'responds with 404' do
+        search_name = 'Junk'
 
-      get "/api/v1/merchants/find_all?name=#{search_name}"
+        get "/api/v1/merchants/find_all?name=#{search_name}"
 
-      expect(response).to_not be_successful
-      expect(response).to have_http_status(404)
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(404)
+      end
+
+      it 'responds with 404' do
+        search_name = ''
+
+        get "/api/v1/merchants/find_all?name=#{search_name}"
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+        merchant = response_body[:data]
+
+        expect(merchant).to eq({})
+      end
     end
-
-    it 'returns 404 if find all by name is empty' do
-      search_name = ''
-
-      get "/api/v1/merchants/find_all?name=#{search_name}"
-
-      expect(response).to_not be_successful
-      expect(response).to have_http_status(400)
-
-      response_body = JSON.parse(response.body, symbolize_names: true)
-      merchant = response_body[:data]
-
-      expect(merchant).to eq({})
-    end
-
   end
 
   describe 'most items' do
-    it 'returns variable number of merchants with most items sold' do
-      quantity = 2
+    context 'when valid quantity' do
+      it 'returns variable number of merchants with most items sold' do
+        quantity = 2
 
-      get "/api/v1/merchants/most_items?quantity=#{quantity}"
+        get "/api/v1/merchants/most_items?quantity=#{quantity}"
 
-      expect(response).to be_successful
+        expect(response).to be_successful
 
-      response_body = JSON.parse(response.body, symbolize_names: true)
-      merchants = response_body[:data]
+        response_body = JSON.parse(response.body, symbolize_names: true)
+        merchants = response_body[:data]
 
-      expect(merchants.count).to eq(2)
+        expect(merchants.count).to eq(2)
 
-      merchants.each do |merchant|
-        expect(merchant).to have_key(:id)
-        expect(merchant[:id]).to be_a(String)
-        expect(merchant).to have_key(:type)
-        expect(merchant[:type]).to be_a(String)
-        expect(merchant[:type]).to eq('items_sold')
+        merchants.each do |merchant|
+          expect(merchant).to have_key(:id)
+          expect(merchant[:id]).to be_a(String)
+          expect(merchant).to have_key(:type)
+          expect(merchant[:type]).to be_a(String)
+          expect(merchant[:type]).to eq('items_sold')
 
-        expect(merchant).to have_key(:attributes)
-        expect(merchant[:attributes]).to have_key(:name)
-        expect(merchant[:attributes][:name]).to be_a(String)
-        expect(merchant[:attributes]).to have_key(:count)
-        expect(merchant[:attributes][:count]).to be_an(Integer)
-        expect(merchant[:attributes]).to_not have_key(:created_at)
+          expect(merchant).to have_key(:attributes)
+          expect(merchant[:attributes]).to have_key(:name)
+          expect(merchant[:attributes][:name]).to be_a(String)
+          expect(merchant[:attributes]).to have_key(:count)
+          expect(merchant[:attributes][:count]).to be_an(Integer)
+          expect(merchant[:attributes]).to_not have_key(:created_at)
+        end
       end
 
+      # it 'returns 5 merchants when quantity is left blank' do
+      #   quantity = ''
+      #
+      #   get "/api/v1/merchants/most_items?quantity=#{quantity}"
+      #
+      #   expect(response).to be_successful
+      #
+      #   response_body = JSON.parse(response.body, symbolize_names: true)
+      #   merchants = response_body[:data]
+      #
+      #   expect(merchants.count).to eq(5)
+      #
+      #   merchants.each do |merchant|
+      #     expect(merchant).to have_key(:id)
+      #     expect(merchant[:id]).to be_a(String)
+      #     expect(merchant).to have_key(:type)
+      #     expect(merchant[:type]).to be_a(String)
+      #     expect(merchant[:type]).to eq('items_sold')
+      #
+      #     expect(merchant).to have_key(:attributes)
+      #     expect(merchant[:attributes]).to have_key(:name)
+      #     expect(merchant[:attributes][:name]).to be_a(String)
+      #     expect(merchant[:attributes]).to have_key(:count)
+      #     expect(merchant[:attributes][:count]).to be_an(Integer)
+      #     expect(merchant[:attributes]).to_not have_key(:created_at)
+      #   end
+      # end
+    end
+
+    context 'when invalid quantity' do
+      it 'responds with 404 for missing parameter' do
+
+        get '/api/v1/merchants/most_items'
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+
+        expect(response_body).to eq({:data=>[], :error=>"error"})
+      end
+
+      it 'responds with 404 for negative integer' do
+        quantity = -1
+
+        get "/api/v1/merchants/most_items?quantity=#{quantity}"
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+      end
+
+      it 'responds with 404 for blank quantity' do
+        quantity = ''
+
+        get "/api/v1/merchants/most_items?quantity=#{quantity}"
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+      end
+
+      it 'responds with 404 for string' do
+        quantity = 'amount'
+
+        get "/api/v1/merchants/most_items?quantity=#{quantity}"
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+      end
     end
   end
 end

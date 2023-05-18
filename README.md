@@ -47,6 +47,7 @@ Rails Engine is a Backend Service Oriented Architecture application that utilize
         <li><a href="#one-merchant">One Merchant</a></li>
         <li><a href="#find-merchant-by-name">Find Merchant By Name</a></li>
         <li><a href="#find-all-merchants-by-name">Find All Merchants By Name</a></li>
+        <li><a href="#merchants-with-most-sold">Merchants With Most Items Sold</a></li>
         <li><a href="#merchant-items">Merchant Items</a></li>
         <li><a href="#all-items">All Items</a></li>
         <li><a href="#one-item">One Item</a></li>
@@ -317,6 +318,52 @@ Endpoints to use in Postman running a local server `rails s`
 ```sh
 {
     "data": {}
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Merchants With Most Items Sold
+
+```sh
+  GET http://localhost:3000/api/v1/merchants/most_items?quantity=2
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": [
+        {
+            "id": "89",
+            "type": "items_sold",
+            "attributes": {
+                "name": "Kassulke, O'Hara and Quitzon",
+                "count": 1653
+            }
+        },
+        {
+            "id": "12",
+            "type": "items_sold",
+            "attributes": {
+                "name": "Kozey Group",
+                "count": 1585
+            }
+        }
+    ]
+}
+```
+
+```sh
+  GET  http://localhost:3000/api/v1/merchants/most_items?quantity=
+```
+
+**Sample Response(400 Bad Request - No search parameter given)**
+
+```sh
+{
+    "data": [],
+    "error": "error"
 }
 ```
 
