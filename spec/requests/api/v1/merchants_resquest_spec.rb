@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Merchants API endpoints' do
+RSpec.describe 'Merchants API endpoints' do
   let!(:merchants) { create_list(:merchant_with_items, 5) }
   let!(:merchant1) { merchants.first }
   let!(:merchant2) { merchants.second }
@@ -21,7 +21,7 @@ describe 'Merchants API endpoints' do
   let!(:m5ii1) { create(:invoice_item, invoice: m5_invoice, item: merchant5.items[4], quantity: 0) }
 
   describe 'merchant index and show' do
-    it 'sends a list of all merchants' do
+    it 'fetches all merchants' do
       get '/api/v1/merchants'
 
       expect(response).to be_successful
@@ -41,7 +41,7 @@ describe 'Merchants API endpoints' do
       end
     end
 
-    it 'gets one merchant by its ID' do
+    it 'fetches one merchant by its ID' do
       get "/api/v1/merchants/#{merchant1.id}"
 
       expect(response).to be_successful
@@ -58,7 +58,7 @@ describe 'Merchants API endpoints' do
       expect(merchant[:attributes]).to_not have_key(:created_at)
     end
 
-    it 'returns error if no merchant by ID' do
+    it 'responds with 404 if no merchant by ID' do
       id = 4_164_616
 
       get "/api/v1/merchants/#{id}"
@@ -71,7 +71,7 @@ describe 'Merchants API endpoints' do
   end
 
   describe 'merchant items' do
-    it 'returns all items from the merchant' do
+    it 'fetches all items from the merchant' do
 
       get "/api/v1/merchants/#{merchant1.id}/items"
 
@@ -98,7 +98,7 @@ describe 'Merchants API endpoints' do
       end
     end
 
-    it 'returns error if merchant ID is passed as a string' do
+    it 'responds with 404 if merchant ID is passed as a string' do
       id = 'merchant_id'
 
       get "/api/v1/merchants/#{id}/items"
@@ -112,7 +112,7 @@ describe 'Merchants API endpoints' do
   end
 
   describe 'find merchant' do
-    it 'can find first merchant matched by case insensitive name' do
+    it 'fetches first merchant matched by case insensitive name' do
       get "/api/v1/merchants/find?name=#{merchant1.name.to(4)}"
 
       expect(response).to be_successful
@@ -144,12 +144,13 @@ describe 'Merchants API endpoints' do
       expect(merchant).to eq({ :message => 'Merchant not found' })
     end
 
-    it 'returns 404 if search by name is empty' do
+    it 'responds with 400 if search by name is empty' do
       search_name = ''
 
       get "/api/v1/merchants/find?name=#{search_name}"
 
       expect(response).to_not be_successful
+      expect(response).to have_http_status(400)
 
       response_body = JSON.parse(response.body, symbolize_names: true)
       merchant = response_body[:data]
@@ -160,7 +161,7 @@ describe 'Merchants API endpoints' do
 
   describe 'find all merchants' do
     context 'when valid' do
-      it 'can find all merchants by name case insensitive' do
+      it 'fetches all merchants by name case insensitive' do
         get "/api/v1/merchants/find_all?name=#{merchant1.name.to(4)}"
 
         expect(response).to be_successful
@@ -188,6 +189,11 @@ describe 'Merchants API endpoints' do
 
         expect(response).to_not be_successful
         expect(response).to have_http_status(404)
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+        merchant = response_body[:data]
+
+        expect(merchant).to eq([])
       end
 
       it 'responds with 404' do
