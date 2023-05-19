@@ -49,7 +49,7 @@ RSpec.describe Merchant, type: :model do
     end
 
     describe '::items_sold' do
-      it 'returns specified quantity fo merchants with most items sold' do
+      it 'scopes specified quantity of merchants with most items sold' do
         qty = 3
         result = Merchant.items_sold(qty)
 
@@ -64,15 +64,36 @@ RSpec.describe Merchant, type: :model do
           expect(merch[:attributes].keys).to eq([:name, :count])
         end
       end
+    end
 
-      xit 'returns merchants in order of most items sold' do
-        result = Merchant.ordered_by_quantity
+    describe '#ordered_by_quantity' do
+      it 'orders merchants by most items sold' do
+        result = Merchant.ordered_by_most_sold
 
         expect(result).to be_an Array
-        expect(result[0]).to eq([merchant3.id, merchant3.name, 10000])
-        expect(result[1]).to eq([merchant2.id, merchant2.name, 1800])
-        expect(result[2]).to eq([merchant1.id, merchant1.name, 10])
-        expect(result[3]).to eq([merchant4.id, merchant4.name, 1])
+        expect(result.count).to eq 4
+        expect(result[0]).to include(id: merchant3.id.to_s)
+        expect(result[1]).to include(id: merchant2.id.to_s)
+        expect(result[2]).to include(id: merchant1.id.to_s)
+        expect(result[3]).to include(id: merchant4.id.to_s)
+        result.each do |merch|
+          expect(merch).to be_a Hash
+          expect(merch.keys).to eq([:id, :type, :attributes])
+          expect(merch[:attributes].keys).to eq([:name, :count])
+        end
+      end
+
+      it 'returns only merchants with invoice items' do
+        result = Merchant.ordered_by_most_sold
+
+        expect(result).to be_an Array
+        expect(result.count).to eq 4
+        result.each do |merch|
+          expect(merch).to be_a Hash
+          expect(merch.keys).to eq([:id, :type, :attributes])
+          expect(merch[:attributes].keys).to eq([:name, :count])
+          expect(merch).to_not include(id: merchant5.id.to_s)
+        end
       end
     end
 
@@ -84,14 +105,42 @@ RSpec.describe Merchant, type: :model do
       end
     end
 
-    describe '#highest_revenue' do
-      it 'returns specified quantity fo merchants with highest revenue' do
+    describe '::top_revenue' do
+      it 'scopes specified quantity of merchants by highest revenue' do
         qty = 2
+        result = Merchant.top_revenue(qty)
 
-        expect(Merchant.highest_revenue(qty)).to eq([
-          [merchant3.id, merchant3.name, Merchant.highest_revenue(qty)[0][2]],
-          [merchant2.id, merchant2.name, Merchant.highest_revenue(qty)[1][2]]
-          ])
+        expect(result).to be_an Array
+        expect(result.count).to eq 2
+        expect(result[0]).to include(id: merchant3.id.to_s)
+        expect(result[1]).to include(id: merchant2.id.to_s)
+        result.each do |merch|
+          expect(merch).to be_a Hash
+          expect(merch.keys).to eq([:id, :type, :attributes])
+          expect(merch[:attributes].keys).to eq([:name, :revenue])
+          expect(merch).to_not include(id: merchant1.id.to_s)
+          expect(merch).to_not include(id: merchant4.id.to_s)
+          expect(merch).to_not include(id: merchant5.id.to_s)
+        end
+      end
+    end
+
+    describe '#highest_revenue' do
+      it 'orders merchants by highest revenue' do
+        result = Merchant.highest_revenue
+
+        expect(result).to be_an Array
+        expect(result.count).to eq 4
+        expect(result[0]).to include(id: merchant3.id.to_s)
+        expect(result[1]).to include(id: merchant2.id.to_s)
+        expect(result[2]).to include(id: merchant1.id.to_s)
+        expect(result[3]).to include(id: merchant4.id.to_s)
+        result.each do |merch|
+          expect(merch).to be_a Hash
+          expect(merch.keys).to eq([:id, :type, :attributes])
+          expect(merch[:attributes].keys).to eq([:name, :revenue])
+          expect(merch).to_not include(id: merchant5.id.to_s)
+        end
       end
     end
 
@@ -99,8 +148,14 @@ RSpec.describe Merchant, type: :model do
       it 'returns total revenue for a merchant' do
         arg = merchant2.id
         total_revenue = (m2ii1.quantity * m2ii1. unit_price) + (m2ii2.quantity * m2ii2. unit_price)
-        expect(Merchant.merchant_revenue(arg)).to be_a Float
-        expect(Merchant.merchant_revenue(arg)).to eq(total_revenue)
+        result = Merchant.merchant_revenue(arg)
+
+        expect(result).to be_a Hash
+        expect(result.keys).to eq([:id, :type, :attributes])
+        expect(result[:id]).to eq(merchant2.id.to_s)
+        expect(result[:type]).to eq('merchant_revenue')
+        expect(result[:attributes]).to have_key(:revenue)
+        expect(result[:attributes][:revenue]).to eq(total_revenue)
       end
     end
   end

@@ -63,10 +63,11 @@ RSpec.describe 'Merchants API endpoints' do
 
       get "/api/v1/merchants/#{id}"
 
-      response_body = JSON.parse(response.body, symbolize_names: true)
-      response_body[:data]
-
       expect(response).to have_http_status(404)
+
+      response_body = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response_body).to eq({ error: 'No merchant found' })
     end
   end
 
@@ -141,7 +142,7 @@ RSpec.describe 'Merchants API endpoints' do
       response_body = JSON.parse(response.body, symbolize_names: true)
       merchant = response_body[:data]
 
-      expect(merchant).to eq({ :message => 'Merchant not found' })
+      expect(merchant).to eq({ message: 'Merchant not found' })
     end
 
     it 'responds with 400 if search by name is empty' do

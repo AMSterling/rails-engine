@@ -59,6 +59,8 @@ Rails Engine is a Backend Service Oriented Architecture application that utilize
         <li><a href="#find-all-items-by-name">Find All Items By Name</a></li>
         <li><a href="#find-all-items-by-price">Find All Items By Price</a></li>
         <li><a href="#item-merchant">Item Merchant</a></li>
+        <li><a href="#highest-revenue-merchants">Merchants By Highest Revenue</a></li>
+        <li><a href="#revenue-for-a-merchant">Total Revenue For a Merchant</a></li>
       </ul>
     </li>  
     <li><a href="#contact">Contact</a></li>
@@ -971,6 +973,87 @@ Endpoints to use in Postman running a local server `rails s`
 {
     "data": {},
     "error": "error"
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Merchants By Highest Revenue
+
+```sh
+  GET http://localhost:3000/api/v1/revenue/merchants?quantity=2
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": [
+        {
+            "id": "14",
+            "type": "merchant_name_revenue",
+            "attributes": {
+                "name": "Dicki-Bednar",
+                "revenue": 1148393.74
+            }
+        },
+        {
+            "id": "89",
+            "type": "merchant_name_revenue",
+            "attributes": {
+                "name": "Kassulke, O'Hara and Quitzon",
+                "revenue": 1015275.15
+            }
+        }
+    ]
+}
+```
+
+```sh
+  GET  http://localhost:3000/api/v1/revenue/merchants?quantity=
+```
+
+**Sample Response(400 Bad Request - No search parameter given)**
+
+```sh
+{
+    "data": [],
+    "error": "error"
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+### Total Revenue For a Merchant
+
+```sh
+  GET http://localhost:3000/api/v1/revenue/merchants/42
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": {
+        "id": "42",
+        "type": "merchant_revenue",
+        "attributes": {
+            "revenue": 532613.9800000001
+        }
+    }
+}
+```
+
+```sh
+  GET  http://localhost:3000/api/v1/revenue/merchants/8923987297
+```
+
+**Sample Response(400 Bad Request - No merchant)**
+
+```sh
+{
+    "status": "Not Found"
 }
 ```
 
