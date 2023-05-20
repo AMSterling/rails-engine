@@ -4,10 +4,8 @@ class Invoice < ApplicationRecord
   belongs_to :customer
   belongs_to :merchant
   has_many :transactions, dependent: :destroy
-  has_many :invoice_items, dependent: :destroy#,  -> { order('sum("quantity")') },
+  has_many :invoice_items, dependent: :destroy
   has_many :items, through: :invoice_items
-
-  # scope :successful_by_quantity, -> { includes(:invoice_items, :transactions).where(transactions: {result: "success"}).select('invoice_items.*').order('invoice_items.quantity') }
 
   def self.delete_empty_invoice
     item_invoices = includes(:items)
@@ -16,13 +14,17 @@ class Invoice < ApplicationRecord
     .pluck(:id)
     Invoice.destroy(item_invoices)
   end
-end
 
-# def self.delete_empty_invoice
-  # item_invoices = joins(:items)
-  # .select('invoices.*')
-  # .group('invoices.id')
-  # .having('count(items) = 1')
-  # .pluck(:id)
-  # Invoice.destroy(item_invoices)
-# end
+  def self.revenue(start_date, end_date)
+    result = joins(:invoice_items, :transactions)
+    .select('invoices.*, sum(invoice_items.quantity * invoice_items.unit_price) as total_revenue')
+    .where(
+      status: 'shipped',
+      created_at: (start_date..(Date.strptime(end_date, '%F') + 1).strftime('%F')),
+      transactions: {result: 'success'}
+    )
+    .group('invoices.id')
+    .pluck('sum(invoice_items.quantity * invoice_items.unit_price)')
+    .sum
+  end
+end

@@ -14,12 +14,11 @@ RSpec.describe Invoice, type: :model do
   end
 
   describe 'class methods' do
-    let!(:invoices) { create_list(:invoice_with_transactions, 5) }
-    let!(:invoice1) { invoices.first }
-    let!(:invoice2) { invoices.second }
-    let!(:invoice3) { invoices.third }
-    let!(:invoice4) { invoices.fourth }
-    let!(:invoice5) { invoices.fifth }
+    let!(:invoice1) { create(:invoice_with_transactions, status: 'packaged', created_at: 5.days.ago) }
+    let!(:invoice2) { create(:invoice_with_transactions, status: 'shipped', created_at: 2.days.ago) }
+    let!(:invoice3) { create(:invoice_with_transactions, status: 'shipped', created_at: 7.days.ago) }
+    let!(:invoice4) { create(:invoice_with_transactions, status: 'shipped', created_at: 18.days.ago) }
+    let!(:invoice5) { create(:invoice_with_transactions, status: 'packaged', created_at: 9.days.ago) }
     let!(:items) { create_list(:item, 3) }
     let!(:item1) { items.first }
     let!(:item2) { items.second }
@@ -33,13 +32,28 @@ RSpec.describe Invoice, type: :model do
     let!(:invoice_item7) { create(:invoice_item, item_id: item3.id, invoice_id: invoice4.id) }
     let!(:invoice_item8) { create(:invoice_item, item_id: item2.id, invoice_id: invoice5.id) }
 
-    it '#delete_empty_invoice' do
+    describe '#delete_empty_invoice' do
+      it 'deletes invoices if only item is delted' do
 
-      expect(Invoice.count).to eq 5
-      expect(item3.invoices.delete_empty_invoice).to eq([invoice3, invoice4])
-      expect(Invoice.count).to eq 3
-      expect(item2.invoices.delete_empty_invoice).to eq([invoice5])
-      expect(Invoice.count).to eq 2
+        expect(Invoice.count).to eq 5
+        expect(item3.invoices.delete_empty_invoice).to eq([invoice3, invoice4])
+        expect(Invoice.count).to eq 3
+        expect(item2.invoices.delete_empty_invoice).to eq([invoice5])
+        expect(Invoice.count).to eq 2
+      end
+    end
+
+    describe '#revenue' do
+      it 'returns all revenue' do
+        start_date = Date.today.days_ago(20).strftime('%F')
+        end_date = Date.today.days_ago(6).strftime('%F')
+        result = Invoice.revenue(start_date, end_date)
+        total_revenue =
+        (invoice_item6.unit_price * invoice_item6.quantity) +
+        (invoice_item7.unit_price * invoice_item7.quantity)
+
+        expect(result).to eq(total_revenue)
+      end
     end
   end
 end

@@ -7,11 +7,11 @@ RSpec.describe 'Revenue API endpoints' do
   let!(:merchant3) { merchants.third }
   let!(:merchant4) { merchants.fourth }
   let!(:merchant5) { merchants.fifth }
-  let!(:m1_invoice) { create(:invoice_with_transactions, transactions_count: 2, merchant: merchant1, status: 'shipped') }
-  let!(:m2_invoice) { create(:invoice_with_transactions, transactions_count: 2, merchant: merchant2, status: 'shipped') }
-  let!(:m3_invoice) { create(:invoice_with_transactions, merchant: merchant3, status: 'shipped') }
-  let!(:m4_invoice) { create(:invoice_with_transactions, merchant: merchant4, status: 'shipped') }
-  let!(:m5_invoice) { create(:invoice_with_transactions, merchant: merchant5) }
+  let!(:m1_invoice) { create(:invoice_with_transactions, merchant: merchant1, status: 'packaged', created_at: 5.days.ago) }
+  let!(:m2_invoice) { create(:invoice_with_transactions, merchant: merchant2, status: 'shipped', created_at: 2.days.ago) }
+  let!(:m3_invoice) { create(:invoice_with_transactions, merchant: merchant3, status: 'shipped', created_at: 8.days.ago) }
+  let!(:m4_invoice) { create(:invoice_with_transactions, merchant: merchant4, status: 'shipped', created_at: 18.days.ago) }
+  let!(:m5_invoice) { create(:invoice_with_transactions, merchant: merchant5, status: 'packaged', created_at: 9.days.ago) }
   let!(:m1ii1) { create(:invoice_item, invoice: m1_invoice, item: merchant1.items[0], quantity: 6000) }
   let!(:m1ii2) { create(:invoice_item, invoice: m1_invoice, item: merchant1.items[1], quantity: 4000) }
   let!(:m2ii1) { create(:invoice_item, invoice: m2_invoice, item: merchant2.items[0], quantity: 1000) }
@@ -126,7 +126,71 @@ RSpec.describe 'Revenue API endpoints' do
 
         response_body = JSON.parse(response.body, symbolize_names: true)
 
-        expect(response_body).to eq({ status: 'Not Found' })
+        expect(response_body).to eq({:error=>"Couldn't find Merchant with 'id'=4164616"})
+      end
+    end
+  end
+
+  describe 'total revenue' do
+    context 'valid start and end dates' do
+      it 'fetches total revenue within a date range' do
+        start_date = Date.today.days_ago(20).strftime('%F')
+        end_date = Date.today.days_ago(6).strftime('%F')
+
+        get "/api/v1/revenue?start=#{start_date}&end=#{end_date}"
+
+        expect(response).to be_successful
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+        revenue = response_body[:data]
+
+        expect(revenue).to have_key(:id)
+        expect(revenue[:id]).to be_nil
+        expect(revenue).to have_key(:attributes)
+        expect(revenue[:attributes]).to have_key(:revenue)
+        expect(revenue[:attributes][:revenue]).to be_a Float
+      end
+    end
+
+    context 'invalid start and end dates' do
+      it 'responds with 400 if dates are blank' do
+        start_date = ''
+        end_date = ''
+
+        get "/api/v1/revenue?start=#{start_date}&end=#{end_date}"
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+
+        expect(response_body).to eq({:data=>{}, :error=>"error"})
+      end
+
+      it 'responds with 400 if dates are missing' do
+
+        get '/api/v1/revenue'
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+
+        expect(response_body).to eq({:data=>{}, :error=>"error"})
+      end
+
+      it 'responds with 400 if any date is missing' do
+        start_date = ''
+        end_date = Date.today.days_ago(6).strftime('%F')
+
+        get "/api/v1/revenue?start=#{start_date}&end=#{end_date}"
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+
+        expect(response_body).to eq({:data=>{}, :error=>"error"})
       end
     end
   end

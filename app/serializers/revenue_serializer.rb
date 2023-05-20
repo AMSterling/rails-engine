@@ -1,9 +1,15 @@
 class RevenueSerializer
   include JSONAPI::Serializer
 
-  def self.new(data)
+  def self.new(revenue)
     {
-      data: data
+      data: {
+        id: nil,
+        type: 'revenue',
+        attributes: {
+          revenue: revenue
+        }
+      }
     }
   end
 end

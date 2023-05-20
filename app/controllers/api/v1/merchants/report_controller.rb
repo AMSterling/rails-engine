@@ -2,10 +2,12 @@ class Api::V1::Merchants::ReportController < ApplicationController
   before_action :param_validation
 
   def index
-    @merchants = Merchant.items_sold(params[:quantity])
-    render json: MerchantReportSerializer.new(@merchants)
+    merchants = Merchant.items_sold(params[:quantity])
+    render json: ItemsSoldSerializer.new(merchants)
   end
 
+  private
+  
   def param_validation
     if !params[:quantity].present?
       render json: {data: [], error: 'error'}, status: 400
