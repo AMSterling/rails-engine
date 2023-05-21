@@ -16,7 +16,7 @@ class Invoice < ApplicationRecord
   end
 
   def self.revenue(start_date, end_date)
-    result = joins(:invoice_items, :transactions)
+    joins(:invoice_items, :transactions)
     .select('invoices.*, sum(invoice_items.quantity * invoice_items.unit_price) as total_revenue')
     .where(
       status: 'shipped',

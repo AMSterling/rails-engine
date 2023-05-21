@@ -194,4 +194,94 @@ RSpec.describe 'Revenue API endpoints' do
       end
     end
   end
+
+  describe 'item revenue' do
+    context 'when valid quantity' do
+      it 'fetches items by highest revenue' do
+        quantity = 2
+
+        get "/api/v1/revenue/items?quantity=#{quantity}"
+
+        expect(response).to be_successful
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+        items = response_body[:data]
+
+        expect(items.count).to eq(2)
+        items.each do |item|
+          expect(item).to have_key(:id)
+          expect(item[:id]).to be_a(String)
+          expect(item).to have_key(:type)
+          expect(item[:type]).to be_a(String)
+          expect(item[:type]).to eq('item_revenue')
+
+          expect(item).to have_key(:attributes)
+          expect(item[:attributes]).to have_key(:name)
+          expect(item[:attributes][:name]).to be_a(String)
+          expect(item[:attributes]).to have_key(:description)
+          expect(item[:attributes][:description]).to be_a(String)
+          expect(item[:attributes]).to have_key(:unit_price)
+          expect(item[:attributes][:unit_price]).to be_a(Float)
+          expect(item[:attributes]).to have_key(:merchant_id)
+          expect(item[:attributes][:merchant_id]).to be_an(Integer)
+          expect(item[:attributes]).to have_key(:revenue)
+          expect(item[:attributes][:revenue]).to be_a(Float)
+          expect(item[:attributes]).to_not have_key(:created_at)
+        end
+      end
+    end
+
+    context 'when invalid quantity' do
+      it 'responds with 404 for missing parameter' do
+
+        get '/api/v1/revenue/items'
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+
+        expect(response_body).to eq({:data=>[], :error=>"error"})
+      end
+
+      it 'responds with 404 for negative integer' do
+        quantity = -1
+
+        get "/api/v1/revenue/items?quantity=#{quantity}"
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+
+        expect(response_body).to eq({:data=>{}})
+      end
+
+      it 'responds with 404 for blank quantity' do
+        quantity = ''
+
+        get "/api/v1/revenue/items?quantity=#{quantity}"
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+
+        expect(response_body).to eq({:data=>[], :error=>"error"})
+      end
+
+      it 'responds with 404 for string' do
+        quantity = 'amount'
+
+        get "/api/v1/revenue/items?quantity=#{quantity}"
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+
+        expect(response_body).to eq({:data=>{}})
+      end
+    end
+  end
 end
