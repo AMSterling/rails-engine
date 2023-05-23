@@ -284,4 +284,113 @@ RSpec.describe 'Revenue API endpoints' do
       end
     end
   end
+
+  describe 'potential revenue' do
+    context 'when valid quantity' do
+      it 'fetches quantity of unshipped invoices' do
+        quantity = 2
+
+        get "/api/v1/revenue/unshipped?quantity=#{quantity}"
+
+        expect(response).to be_successful
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+        invoices = response_body[:data]
+
+        expect(invoices.count).to eq(2)
+        invoices.each do |invoice|
+          expect(invoice).to have_key(:id)
+          expect(invoice[:id]).to be_a(String)
+          expect(invoice).to have_key(:type)
+          expect(invoice[:type]).to be_a(String)
+          expect(invoice[:type]).to eq('unshipped_order')
+
+          expect(invoice).to have_key(:attributes)
+          expect(invoice[:attributes]).to have_key(:potential_revenue)
+          expect(invoice[:attributes][:potential_revenue]).to be_a(Float)
+          expect(invoice[:attributes]).to_not have_key(:created_at)
+        end
+      end
+    end
+
+    context 'when invalid quantity' do
+      it 'responds with 404 for missing parameter' do
+
+        get '/api/v1/revenue/unshipped'
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+
+        expect(response_body).to eq({:data=>[], :error=>"error"})
+      end
+
+      it 'responds with 404 for negative integer' do
+        quantity = -1
+
+        get "/api/v1/revenue/unshipped?quantity=#{quantity}"
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+
+        expect(response_body).to eq({:data=>{}})
+      end
+
+      it 'responds with 404 for blank quantity' do
+        quantity = ''
+
+        get "/api/v1/revenue/unshipped?quantity=#{quantity}"
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+
+        expect(response_body).to eq({:data=>[], :error=>"error"})
+      end
+
+      it 'responds with 404 for string' do
+        quantity = 'amount'
+
+        get "/api/v1/revenue/unshipped?quantity=#{quantity}"
+
+        expect(response).to_not be_successful
+        expect(response).to have_http_status(400)
+
+        response_body = JSON.parse(response.body, symbolize_names: true)
+
+        expect(response_body).to eq({:data=>{}})
+      end
+    end
+  end
+
+  describe 'weekly revenue' do
+    it 'fetches a report of all revenue by week' do
+
+      get '/api/v1/revenue/weekly'
+
+      expect(response).to be_successful
+
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      weeks = response_body[:data]
+
+      expect(weeks).to be_an Array
+      expect(weeks.count).to eq 2
+      weeks.each do |week|
+        expect(week).to have_key(:id)
+        expect(week[:id]).to be_nil
+        expect(week).to have_key(:type)
+        expect(week[:type]).to eq('weekly_revenue')
+        expect(week).to have_key(:attributes)
+        expect(week[:attributes]).to be_a Hash
+        expect(week[:attributes]).to have_key(:week)
+        expect(week[:attributes][:week]) =~ (/\d{4}\-\d{2}\-\d{2}/)
+        expect(week[:attributes]).to have_key(:revenue)
+        expect(week[:attributes][:revenue]).to be_a Float
+      end
+    end
+  end
 end

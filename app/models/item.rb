@@ -15,22 +15,10 @@ class Item < ApplicationRecord
 
   def self.highest_revenue(qty)
     joins(invoice_items: {invoice: :transactions})
-    .select('items.*, sum(invoice_items.quantity * invoice_items.unit_price) as total_revenue')
+    .select('items.*, SUM(invoice_items.quantity * invoice_items.unit_price) AS revenue')
     .where('transactions.result = ?', 'success')
     .group('items.id')
-    .order('total_revenue desc')
+    .order('revenue desc')
     .take(qty)
-  end
-
-  def revenue
-    invoice_items.joins(invoice: :transactions)
-    .where(transactions: {result: 'success'})
-    .pluck('sum(invoice_items.quantity * invoice_items.unit_price)')
-    .first
-  end
-
-  def as_json(options={})
-    options[:methods] = [:revenue]
-    super
   end
 end

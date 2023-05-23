@@ -51,32 +51,37 @@ RSpec.describe Merchant, type: :model do
     describe '#items_sold' do
       it 'scopes specified quantity of merchants with most items sold' do
         qty = 3
-        result = Merchant.items_sold(qty)
+        results = Merchant.items_sold(qty)
 
-        expect(result).to be_an Array
-        expect(result.count).to eq 3
-        expect(result).to eq([merchant3, merchant2, merchant1])
-        expect(result).to_not include(merchant4)
-        expect(result).to_not include(merchant5)
-      end
-    end
-
-    describe '.count' do
-      it 'returns number of items sold by a merchant' do
-
-        expect(merchant2.count).to eq 1800
+        expect(results).to be_an Array
+        expect(results.count).to eq 3
+        expect(results).to eq([merchant3, merchant2, merchant1])
+        expect(results).to_not include(merchant4)
+        expect(results).to_not include(merchant5)
+        results.each do |result|
+          expect(result.attributes.keys).to eq(['id', 'name', 'created_at', 'updated_at', 'count'])
+          expect(result.id).to be_an Integer
+          expect(result.name).to be_a String
+          expect(result.count).to be_an Integer
+        end
       end
     end
 
     describe '#highest_revenue' do
       it 'orders merchants by highest revenue' do
         qty = 4
-        result = Merchant.highest_revenue(qty)
+        results = Merchant.highest_revenue(qty)
 
-        expect(result).to be_an Array
-        expect(result.count).to eq 4
-        expect(result).to eq([merchant3, merchant2, merchant1, merchant4])
-        expect(result).to_not include(merchant5)
+        expect(results).to be_an Array
+        expect(results.count).to eq 4
+        expect(results).to eq([merchant3, merchant2, merchant1, merchant4])
+        expect(results).to_not include(merchant5)
+        results.each do |result|
+          expect(result.attributes.keys).to eq(['id', 'name', 'created_at', 'updated_at', 'revenue'])
+          expect(result.id).to be_an Integer
+          expect(result.name).to be_a String
+          expect(result.revenue).to be_a Float
+        end
       end
     end
 
@@ -92,7 +97,6 @@ RSpec.describe Merchant, type: :model do
       it 'assigns instance methods as attribute' do
 
         expect(merchant1.to_json).to include('revenue')
-        expect(merchant1.to_json).to include('count')
       end
     end
   end

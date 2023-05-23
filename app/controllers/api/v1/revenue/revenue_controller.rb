@@ -1,11 +1,23 @@
 class Api::V1::Revenue::RevenueController < ApplicationController
-  before_action :param_validation
+  include QuantityValidator
+  before_action :param_validation, only: %i[index]
+  before_action :quantity_validation, only: %i[unshipped]
 
   def index
     if between_dates?(params)
-      revenue = Invoice.revenue(params[:start], params[:end])
+      revenue = Invoice.total_revenue(params[:start], params[:end])
       render json: RevenueSerializer.new(revenue)
     end
+  end
+
+  def unshipped
+    orders = Invoice.unshipped_order(params[:quantity])
+    render json: UnshippedOrderSerializer.new(orders)
+  end
+
+  def weekly
+    reports = Invoice.weekly_revenue
+    render json: WeeklyRevenueSerializer.new(reports)
   end
 
   private

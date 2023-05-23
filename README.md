@@ -47,7 +47,7 @@ Rails Engine is a Backend Service Oriented Architecture application that utilize
         <li><a href="#one-merchant">One Merchant</a></li>
         <li><a href="#find-merchant-by-name">Find Merchant By Name</a></li>
         <li><a href="#find-all-merchants-by-name">Find All Merchants By Name</a></li>
-        <li><a href="#merchants-with-most-sold">Merchants With Most Items Sold</a></li>
+        <li><a href="#merchants-with-most-sold">Merchants with Most Items Sold</a></li>
         <li><a href="#merchant-items">Merchant Items</a></li>
         <li><a href="#all-items">All Items</a></li>
         <li><a href="#one-item">One Item</a></li>
@@ -59,8 +59,12 @@ Rails Engine is a Backend Service Oriented Architecture application that utilize
         <li><a href="#find-all-items-by-name">Find All Items By Name</a></li>
         <li><a href="#find-all-items-by-price">Find All Items By Price</a></li>
         <li><a href="#item-merchant">Item Merchant</a></li>
-        <li><a href="#highest-revenue-merchants">Merchants By Highest Revenue</a></li>
-        <li><a href="#revenue-for-a-merchant">Total Revenue For a Merchant</a></li>
+        <li><a href="#highest-revenue-merchants">Merchants with Most Revenue</a></li>
+        <li><a href="#revenue-for-a-merchant">Total Revenue for a Given Merchant</a></li>
+        <li><a href="#items-by-revenue">Items Ranked By Revenue</a></li>
+        <li><a href="#total-revenue">Revenue across Date Range</a></li>
+        <li><a href="#potential-revenue">Potential Revenue of Unshipped Orders</a></li>
+        <li><a href="#weekly-revenue">Report by Month of Revenue Generated</a></li>
       </ul>
     </li>  
     <li><a href="#contact">Contact</a></li>
@@ -325,7 +329,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### Merchants With Most Items Sold
+### Merchants with Most Items Sold
 
 ```sh
   GET http://localhost:3000/api/v1/merchants/most_items?quantity=2
@@ -978,7 +982,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### Merchants By Highest Revenue
+### Merchants with Most Revenue
 
 ```sh
   GET http://localhost:3000/api/v1/revenue/merchants?quantity=2
@@ -1025,7 +1029,7 @@ Endpoints to use in Postman running a local server `rails s`
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-### Total Revenue For a Merchant
+### Total Revenue for a Given Merchant
 
 ```sh
   GET http://localhost:3000/api/v1/revenue/merchants/42
@@ -1058,6 +1062,186 @@ Endpoints to use in Postman running a local server `rails s`
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+### Items Ranked By Revenue
+
+```sh
+  GET http://localhost:3000/api/v1/revenue/items?quantity=1
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": [
+        {
+            "id": "227",
+            "type": "item_revenue",
+            "attributes": {
+                "name": "Item Dicta Autem",
+                "description": "Fugiat est ut eum impedit vel et. Deleniti quia debitis similique. Sint atque explicabo similique est. Iste fugit quis voluptas. Rerum ut harum sed fugiat eveniet ullam ut.",
+                "unit_price": 853.19,
+                "merchant_id": 14,
+                "revenue": 1148393.7399999984
+            }
+        },
+        {
+            "id": "2174",
+            "type": "item_revenue",
+            "attributes": {
+                "name": "Item Nam Magnam",
+                "description": "Eligendi quibusdam eveniet temporibus sed ratione ut magnam. Sit alias et. Laborum dignissimos quos impedit excepturi molestiae.",
+                "unit_price": 788.08,
+                "merchant_id": 89,
+                "revenue": 695086.5599999998
+            }
+        }
+    ]
+}
+```
+
+```sh
+  GET  http://localhost:3000/api/v1/revenue/items
+```
+
+**Sample Response(400 Bad Request - Missing parameter)**
+
+```sh
+{
+    "data": [],
+    "error": "error"
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+### Revenue across Date Range
+
+```sh
+  GET http://localhost:3000/api/v1/revenue?start=2012-03-09&end=2012-03-24
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": {
+        "id": null,
+        "type": "revenue",
+        "attributes": {
+            "revenue": 43201227.8
+        }
+    }
+}
+```
+
+```sh
+  GET  http://localhost:3000/api/v1/revenue?start=2012-03-09&end=
+```
+
+**Sample Response(400 Bad Request - Missing parameter)**
+
+```sh
+{
+    "data": {},
+    "error": "error"
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+### Potential Revenue of Unshipped Orders
+
+```sh
+  GET http://localhost:3000/api/v1/revenue/unshipped?quantity=1
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": [
+        {
+            "id": "4844",
+            "type": "unshipped_order",
+            "attributes": {
+                "potential_revenue": 1504.08
+            }
+        }
+    ]
+}
+```
+
+```sh
+  GET  http://localhost:3000/api/v1/revenue/unshipped
+```
+
+**Sample Response(400 Bad Request - Missing parameter)**
+
+```sh
+{
+    "data": [],
+    "error": "error"
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+
+### Report by Month of Revenue Generated
+
+```sh
+  GET http://localhost:3000/api/v1/revenue/weekly
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": [
+        {
+            "id": null,
+            "type": "weekly_revenue",
+            "attributes": {
+                "week": "2012-03-05",
+                "revenue": 14981117.170000013
+            }
+        },
+        {
+            "id": null,
+            "type": "weekly_revenue",
+            "attributes": {
+                "week": "2012-03-12",
+                "revenue": 18778641.380000062
+            }
+        },
+        {
+            "id": null,
+            "type": "weekly_revenue",
+            "attributes": {
+                "week": "2012-03-19",
+                "revenue": 19106531.87999994
+            }
+        },
+        {
+            "id": null,
+            "type": "weekly_revenue",
+            "attributes": {
+                "week": "2012-03-26",
+                "revenue": 4627284.439999996
+            }
+        }
+    ]
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ## Contact
 

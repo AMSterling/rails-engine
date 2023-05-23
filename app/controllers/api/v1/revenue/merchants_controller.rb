@@ -1,14 +1,10 @@
 class Api::V1::Revenue::MerchantsController < ApplicationController
+  include QuantityValidator
+  before_action :quantity_validation, only: %i[index]
 
   def index
-    if !params[:quantity].present?
-      render json: {data: [], error: 'error'}, status: 400
-    elsif (params[:quantity].to_i < 0) || (params[:quantity].scan(/\d/).empty?)
-      render json: { data: {} }, status: :bad_request
-    else
-      merchants = Merchant.highest_revenue(params[:quantity])
-      render json: MerchantNameRevenueSerializer.new(merchants)
-    end
+    merchants = Merchant.highest_revenue(params[:quantity])
+    render json: MerchantNameRevenueSerializer.new(merchants)
   end
 
   def show

@@ -23,14 +23,14 @@ RSpec.describe Invoice, type: :model do
     let!(:item1) { items.first }
     let!(:item2) { items.second }
     let!(:item3) { items.third }
-    let!(:invoice_item1) { create(:invoice_item, item_id: item1.id, invoice_id: invoice1.id) }
-    let!(:invoice_item2) { create(:invoice_item, item_id: item2.id, invoice_id: invoice1.id) }
-    let!(:invoice_item3) { create(:invoice_item, item_id: item1.id, invoice_id: invoice2.id) }
-    let!(:invoice_item4) { create(:invoice_item, item_id: item2.id, invoice_id: invoice2.id) }
-    let!(:invoice_item5) { create(:invoice_item, item_id: item3.id, invoice_id: invoice2.id) }
-    let!(:invoice_item6) { create(:invoice_item, item_id: item3.id, invoice_id: invoice3.id) }
-    let!(:invoice_item7) { create(:invoice_item, item_id: item3.id, invoice_id: invoice4.id) }
-    let!(:invoice_item8) { create(:invoice_item, item_id: item2.id, invoice_id: invoice5.id) }
+    let!(:invoice_item1) { create(:invoice_item, item: item1, invoice: invoice1, quantity: 50) }
+    let!(:invoice_item2) { create(:invoice_item, item: item2, invoice: invoice1) }
+    let!(:invoice_item3) { create(:invoice_item, item: item1, invoice: invoice2) }
+    let!(:invoice_item4) { create(:invoice_item, item: item2, invoice: invoice2) }
+    let!(:invoice_item5) { create(:invoice_item, item: item3, invoice: invoice2) }
+    let!(:invoice_item6) { create(:invoice_item, item: item3, invoice: invoice3) }
+    let!(:invoice_item7) { create(:invoice_item, item: item3, invoice: invoice4) }
+    let!(:invoice_item8) { create(:invoice_item, item: item2, invoice: invoice5, quantity: 3) }
 
     describe '#delete_empty_invoice' do
       it 'deletes invoices if only item is delted' do
@@ -43,16 +43,44 @@ RSpec.describe Invoice, type: :model do
       end
     end
 
-    describe '#revenue' do
+    describe '#total_revenue' do
       it 'returns all revenue' do
         start_date = Date.today.days_ago(20).strftime('%F')
         end_date = Date.today.days_ago(6).strftime('%F')
-        result = Invoice.revenue(start_date, end_date)
+        result = Invoice.total_revenue(start_date, end_date)
         total_revenue =
         (invoice_item6.unit_price * invoice_item6.quantity) +
         (invoice_item7.unit_price * invoice_item7.quantity)
 
         expect(result).to eq(total_revenue)
+      end
+    end
+
+    describe '#unshipped_order' do
+      it 'returns a quantity of unshipped invoices' do
+        qty = 2
+        results = Invoice.unshipped_order(qty)
+
+        expect(results).to eq([invoice1, invoice5])
+        results.each do |result|
+
+          expect(result.attributes.keys).to eq(['id', 'potential_revenue'])
+          expect(result.id).to be_an Integer
+          expect(result.potential_revenue).to be_a Float
+        end
+      end
+    end
+
+    describe '#weekly_revenue' do
+      it 'returns total revenue truncated by week' do
+        results = Invoice.weekly_revenue
+
+        results.each do |result|
+          expect(result.attributes.keys).to eq(['id', 'week', 'revenue'])
+          expect(result.id).to be_nil
+          expect(result.week).to be_a Time
+          expect(result.revenue).to be_a Float
+        end
       end
     end
   end
