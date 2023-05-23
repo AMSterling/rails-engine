@@ -47,7 +47,7 @@ Rails Engine is a Backend Service Oriented Architecture application that utilize
         <li><a href="#one-merchant">One Merchant</a></li>
         <li><a href="#find-merchant-by-name">Find Merchant By Name</a></li>
         <li><a href="#find-all-merchants-by-name">Find All Merchants By Name</a></li>
-        <li><a href="#merchants-with-most-sold">Merchants with Most Items Sold</a></li>
+        <li><a href="#merchants-with-most-items-sold">Merchants with Most Items Sold</a></li>
         <li><a href="#merchant-items">Merchant Items</a></li>
         <li><a href="#all-items">All Items</a></li>
         <li><a href="#one-item">One Item</a></li>
@@ -59,12 +59,12 @@ Rails Engine is a Backend Service Oriented Architecture application that utilize
         <li><a href="#find-all-items-by-name">Find All Items By Name</a></li>
         <li><a href="#find-all-items-by-price">Find All Items By Price</a></li>
         <li><a href="#item-merchant">Item Merchant</a></li>
-        <li><a href="#highest-revenue-merchants">Merchants with Most Revenue</a></li>
-        <li><a href="#revenue-for-a-merchant">Total Revenue for a Given Merchant</a></li>
-        <li><a href="#items-by-revenue">Items Ranked By Revenue</a></li>
-        <li><a href="#total-revenue">Revenue across Date Range</a></li>
-        <li><a href="#potential-revenue">Potential Revenue of Unshipped Orders</a></li>
-        <li><a href="#weekly-revenue">Report by Month of Revenue Generated</a></li>
+        <li><a href="#merchants-with-most-revenue">Merchants with Most Revenue</a></li>
+        <li><a href="#total-revenue-for-a-given-merchant">Total Revenue for a Given Merchant</a></li>
+        <li><a href="#items-ranked-by-revenue">Items Ranked By Revenue</a></li>
+        <li><a href="#revenue-across-date-range">Revenue Across Date Range</a></li>
+        <li><a href="#potential-revenue-of-unshipped-orders">Potential Revenue of Unshipped Orders</a></li>
+        <li><a href="#report-by-month-of-revenue-generated">Report by Month of Revenue Generated</a></li>
       </ul>
     </li>  
     <li><a href="#contact">Contact</a></li>
@@ -1117,7 +1117,7 @@ Endpoints to use in Postman running a local server `rails s`
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-### Revenue across Date Range
+### Revenue Across Date Range
 
 ```sh
   GET http://localhost:3000/api/v1/revenue?start=2012-03-09&end=2012-03-24
