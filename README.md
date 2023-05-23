@@ -47,7 +47,6 @@ Rails Engine is a Backend Service Oriented Architecture application that utilize
         <li><a href="#one-merchant">One Merchant</a></li>
         <li><a href="#find-merchant-by-name">Find Merchant By Name</a></li>
         <li><a href="#find-all-merchants-by-name">Find All Merchants By Name</a></li>
-        <li><a href="#merchants-with-most-items-sold">Merchants with Most Items Sold</a></li>
         <li><a href="#merchant-items">Merchant Items</a></li>
         <li><a href="#all-items">All Items</a></li>
         <li><a href="#one-item">One Item</a></li>
@@ -59,6 +58,7 @@ Rails Engine is a Backend Service Oriented Architecture application that utilize
         <li><a href="#find-all-items-by-name">Find All Items By Name</a></li>
         <li><a href="#find-all-items-by-price">Find All Items By Price</a></li>
         <li><a href="#item-merchant">Item Merchant</a></li>
+        <li><a href="#merchants-with-most-items-sold">Merchants with Most Items Sold</a></li>
         <li><a href="#merchants-with-most-revenue">Merchants with Most Revenue</a></li>
         <li><a href="#total-revenue-for-a-given-merchant">Total Revenue for a Given Merchant</a></li>
         <li><a href="#items-ranked-by-revenue">Items Ranked By Revenue</a></li>
@@ -140,6 +140,7 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
 Endpoints to use in Postman running a local server `rails s`
 
+
 ### All Merchants
 
 ```sh
@@ -196,6 +197,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+
 ### One Merchant
 
 ```sh
@@ -231,6 +233,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+
 ### Find Merchant By Name
 
 ```sh
@@ -264,6 +267,7 @@ Endpoints to use in Postman running a local server `rails s`
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ### Find All Merchants By Name
 
@@ -329,51 +333,6 @@ Endpoints to use in Postman running a local server `rails s`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### Merchants with Most Items Sold
-
-```sh
-  GET http://localhost:3000/api/v1/merchants/most_items?quantity=2
-```
-
-**Sample Response(200)**
-
-```sh
-{
-    "data": [
-        {
-            "id": "89",
-            "type": "items_sold",
-            "attributes": {
-                "name": "Kassulke, O'Hara and Quitzon",
-                "count": 1653
-            }
-        },
-        {
-            "id": "12",
-            "type": "items_sold",
-            "attributes": {
-                "name": "Kozey Group",
-                "count": 1585
-            }
-        }
-    ]
-}
-```
-
-```sh
-  GET  http://localhost:3000/api/v1/merchants/most_items?quantity=
-```
-
-**Sample Response(400 Bad Request - No search parameter given)**
-
-```sh
-{
-    "data": [],
-    "error": "error"
-}
-```
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Merchant Items
 
@@ -459,6 +418,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+
 ### All Items
 
 ```sh
@@ -525,6 +485,9 @@ Endpoints to use in Postman running a local server `rails s`
 }
 ```
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
 ### One Item
 
 ```sh
@@ -563,6 +526,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+
 ### Create Item
 
 ```sh
@@ -598,6 +562,7 @@ Endpoints to use in Postman running a local server `rails s`
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ### Update Item
 
@@ -635,6 +600,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+
 ### Delete Item
 
 ```sh
@@ -650,6 +616,7 @@ Endpoints to use in Postman running a local server `rails s`
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ### Find Item By Name
 
@@ -688,6 +655,7 @@ Endpoints to use in Postman running a local server `rails s`
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ### Find Item By Price
 
@@ -781,6 +749,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+
 ### Find All Items By Name
 
 ```sh
@@ -848,6 +817,7 @@ Endpoints to use in Postman running a local server `rails s`
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ### Find All Items By Price
 
@@ -981,6 +951,54 @@ Endpoints to use in Postman running a local server `rails s`
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+### Merchants with Most Items Sold
+
+```sh
+  GET http://localhost:3000/api/v1/merchants/most_items?quantity=2
+```
+
+**Sample Response(200)**
+
+```sh
+{
+    "data": [
+        {
+            "id": "89",
+            "type": "items_sold",
+            "attributes": {
+                "name": "Kassulke, O'Hara and Quitzon",
+                "count": 1653
+            }
+        },
+        {
+            "id": "12",
+            "type": "items_sold",
+            "attributes": {
+                "name": "Kozey Group",
+                "count": 1585
+            }
+        }
+    ]
+}
+```
+
+```sh
+  GET  http://localhost:3000/api/v1/merchants/most_items?quantity=
+```
+
+**Sample Response(400 Bad Request - No search parameter given)**
+
+```sh
+{
+    "data": [],
+    "error": "error"
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ### Merchants with Most Revenue
 
@@ -1189,8 +1207,6 @@ Endpoints to use in Postman running a local server `rails s`
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 
 ### Report by Month of Revenue Generated
