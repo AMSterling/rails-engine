@@ -85,17 +85,19 @@ Rails Engine is a Backend Service Oriented Architecture application that utilize
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-
 Ruby:
   ```sh
-  rbenv install 2.7.4
+  2.7.4
   ```
 Rails:
   ```sh
-  gem install rails --version 5.2.8
+  5.2.8
   ```
-
+Database:
+  ```sh
+  postgresql@14
+  ```
+  
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Installation
