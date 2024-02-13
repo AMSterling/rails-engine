@@ -1,6 +1,10 @@
 require 'simplecov'
 SimpleCov.start 'rails' # open coverage/index.html
 SimpleCov.add_filter %w[spec config channels jobs mailers]
+
+require 'shields_badge'
+SimpleCov.formatter = SimpleCov::Formatter::ShieldsBadge
+
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

@@ -5,6 +5,7 @@
 <div align="right">
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/26f1b36435ef838c9599/maintainability)](https://codeclimate.com/github/AMSterling/rails-engine/maintainability)
+[![Coverage](badge.svg)](https://github.com/AMSterling/rails-engine)
 
 </div>
 
