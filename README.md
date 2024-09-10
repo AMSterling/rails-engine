@@ -152,7 +152,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": [
         {
@@ -209,7 +209,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": {
         "id": "42",
@@ -228,7 +228,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(404 Not Found - Merchant ID doesn't exist)**
 
-```sh
+```json
 {
     "error": "No merchant found"
 }
@@ -245,7 +245,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": {
         "id": "28",
@@ -263,7 +263,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(400 Bad Request - No search parameter given)**
 
-```sh
+```json
 {
     "data": {}
 }
@@ -280,7 +280,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": [
         {
@@ -328,7 +328,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(400 Bad Request - No search parameter given)**
 
-```sh
+```json
 {
     "data": {}
 }
@@ -345,7 +345,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": [
         {
@@ -413,7 +413,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(404 Not Found - Merchant ID doesn't exist)**
 
-```sh
+```json
 {
     "error": "error"
 }
@@ -430,7 +430,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
    "data": [
        {
@@ -499,7 +499,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": {
         "id": "179",
@@ -521,7 +521,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(404 Not Found - Item ID doesn't exist)**
 
-```sh
+```json
 {
     "error": "Item does not exist or is no longer available"
 }
@@ -538,7 +538,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Body**
 
-```sh
+```json
 {
   "name": "{{item_name}}",
   "description": "{{item_description}}",
@@ -549,7 +549,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(201 Created)**
 
-```sh
+```json
 {
     "data": {
         "id": "2549",
@@ -575,7 +575,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Body**
 
-```sh
+```json
 {
     "name": "{{new_item_name}}",
     "description": "{{new_item_description}}",
@@ -586,7 +586,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": {
         "id": "179",
@@ -612,7 +612,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(404 Not found)**
 
-```sh
+```json
 {
     "error": "error"
 }
@@ -629,7 +629,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": {
         "id": "21",
@@ -650,7 +650,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(400 Bad Request - Item name not passed in)**
 
-```sh
+```json
 {
     "data": {},
     "error": "error"
@@ -668,7 +668,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": {
         "id": "2352",
@@ -689,7 +689,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": {
         "id": "839",
@@ -713,7 +713,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(400 Bad Request - Item price not passed in)**
 
-```sh
+```json
 {
     "data": {},
     "error": "error"
@@ -730,7 +730,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(400 Bad Request - Price out of range)**
 
-```sh
+```json
 {
     "data": {},
     "error": "error"
@@ -743,7 +743,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(400 Bad Request - Name and Price)**
 
-```sh
+```json
 {
     "data": {},
     "error": "error"
@@ -761,7 +761,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": [
         {
@@ -830,7 +830,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": [
         {
@@ -873,7 +873,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200 - price range)**
 
-```sh
+```json
 {
     "data": [
         {
@@ -918,7 +918,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(400 Bad Request - Item search parameter not passed in)**
 
-```sh
+```json
 {
     "data": {},
     "error": "error"
@@ -933,7 +933,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(400 Bad Request - Price out of range)**
 
-```sh
+```json
 {
     "data": {},
     "error": "error"
@@ -946,7 +946,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(400 Bad Request - Name and Price)**
 
-```sh
+```json
 {
     "data": {},
     "error": "error"
@@ -964,7 +964,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": [
         {
@@ -993,7 +993,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(400 Bad Request - No search parameter given)**
 
-```sh
+```json
 {
     "data": [],
     "error": "error"
@@ -1011,7 +1011,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": [
         {
@@ -1040,7 +1040,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(400 Bad Request - No search parameter given)**
 
-```sh
+```json
 {
     "data": [],
     "error": "error"
@@ -1058,7 +1058,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": {
         "id": "42",
@@ -1076,7 +1076,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(400 Bad Request - No merchant)**
 
-```sh
+```json
 {
     "status": "Not Found"
 }
@@ -1093,7 +1093,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": [
         {
@@ -1128,7 +1128,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(400 Bad Request - Missing parameter)**
 
-```sh
+```json
 {
     "data": [],
     "error": "error"
@@ -1146,7 +1146,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": {
         "id": null,
@@ -1164,7 +1164,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(400 Bad Request - Missing parameter)**
 
-```sh
+```json
 {
     "data": {},
     "error": "error"
@@ -1182,7 +1182,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": [
         {
@@ -1202,7 +1202,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(400 Bad Request - Missing parameter)**
 
-```sh
+```json
 {
     "data": [],
     "error": "error"
@@ -1220,7 +1220,7 @@ Endpoints to use in Postman running a local server `rails s`
 
 **Sample Response(200)**
 
-```sh
+```json
 {
     "data": [
         {
@@ -1287,7 +1287,7 @@ Project Link: [https://github.com/AMSterling/rails-engine](https://github.com/AM
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/sterling-316a6223a/
 
-[Atom]: https://img.shields.io/badge/Atom-66595C?style=for-the-badge&logo=Atom&logoColor=white
+[Atom]: https://custom-icon-badges.demolab.com/badge/Atom-5FB57D?style=for-the-badge&logo=atom
 [Atom-url]: https://github.com/atom/atom/releases/tag/v1.60.0
 
 [Bootstrap]: https://img.shields.io/badge/bootstrap-%23563D7C.svg?style=for-the-badge&logo=bootstrap&logoColor=white
